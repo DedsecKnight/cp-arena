@@ -4,7 +4,7 @@
   "description": "Coding Web Application",
   "main": "server.js",
   "scripts": {
-    "dev" : "nodemon server"
+    "server" : "nodemon server"
   },
   "author": "Mike Nguyen",
   "license": "MIT",
