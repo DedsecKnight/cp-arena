@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { model } = require('./Submission');
 const User = new mongoose.Schema({
     name: {
         type: String, 
@@ -29,7 +28,8 @@ const User = new mongoose.Schema({
             type: String, 
         },
         description: {
-            type: String
+            type: String,
+            default: "N/A"
         },
         language: {
             type: String,
