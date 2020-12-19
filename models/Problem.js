@@ -4,6 +4,10 @@ const Problem = new mongoose.Schema({
         type: String, 
         required: true
     },
+    difficulty: {
+        type: String, 
+        required: true
+    },
     statement: {
         type: String, 
         required: true

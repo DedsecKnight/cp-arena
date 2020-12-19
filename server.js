@@ -1,9 +1,11 @@
 const express = require('express');
+const connect_database = require('./config/database');
 const app = express();
 
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json({ extended: true }));
+connect_database();
 
 app.get('/', (req, res) => { 
     res.send("Test route ok");
