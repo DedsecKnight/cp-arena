@@ -6,13 +6,7 @@ const { check, validationResult, body } = require('express-validator');
 const User = require('../../models/User');
 const { JsonWebTokenError } = require('jsonwebtoken');
 const router = express.Router();
-
-// @route   /api/users/
-// @desc    Test route
-// @access  Public
-router.get('/', (req, res) => {
-    res.send("User route OK");
-});
+const auth = require('./auth');
 
 
 // @route   POST /api/users/
@@ -49,9 +43,7 @@ router.post('/', [
 
         await user.save();
 
-        const payload = {
-            user: user._id
-        };
+        const payload = { user: { id: user._id} };
 
         jwt.sign(payload, config.get('jwtSecret'), { expiresIn: 360000 }, (err, token) => {
             if (err) throw err;
@@ -64,6 +56,52 @@ router.post('/', [
         res.status(500).send("Server Error");
     }
 });
+
+// @route   GET /api/users/
+// @desc    Login user
+// @access  Public
+router.get('/', [
+    check('email', 'Email is required').not().isEmpty(),
+    check('password', 'Password is required').not().isEmpty()
+], async (req, res) => {
+    const errors = validationResult(req).array();
+    if (errors.length > 0) return res.status(400).json({ errors: errors });
+    const { email, password } = req.body;
+    try {
+        let user = await User.findOne({ email }).select('_id email password');
+        if (!user) return res.status(400).json({ errors: [{msg : "Invalid credentials"}]});
+
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) return res.status(400).json({ errors: [{msg : "Invalid credentials"}]});
+
+        const payload = { user: { id: user._id} };
+        jwt.sign(payload, config.get("jwtSecret"), { expiresIn : 360000 }, (err, token) => {
+            if (err) throw err;
+            return res.status(200).json({ token });
+        });    
+    } 
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+
+// @route   GET /api/users/me
+// @desc    Get database of current user
+// @access  Private
+router.get('/me', auth, async (req, res) => {
+    try {
+        const me = await User.findOne({ _id: req.user.id });
+        return res.status(200).json(me);
+    } 
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+
 
 
 module.exports = router;
