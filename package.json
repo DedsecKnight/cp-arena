@@ -4,7 +4,7 @@
   "description": "Coding Web Application",
   "main": "server.js",
   "scripts": {
-    "server" : "nodemon server"
+    "server": "nodemon server"
   },
   "author": "Mike Nguyen",
   "license": "MIT",
@@ -12,6 +12,7 @@
     "bcryptjs": "^2.4.3",
     "config": "^3.3.3",
     "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
     "express-validator": "^6.8.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.8"
