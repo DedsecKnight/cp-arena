@@ -23,7 +23,7 @@ router.post('/',  [
     check('name', 'Problem name is required').not().isEmpty(),
     check('difficulty', 'Problem difficulty is required').not().isEmpty(),
     body('difficulty').custom(val => {
-        if (val !== "easy" && val != "medium" && val != "hard") throw new Error('Invalid difficulty');
+        if (val !== "easy" && val !== "medium" && val !== "hard") throw new Error('Invalid difficulty');
         return true;
     }),
     check('statement', 'Problem statement is required').not().isEmpty(),
@@ -40,12 +40,12 @@ router.post('/',  [
 ], async (req, res) => {
     const errors = validationResult(req).array();
     if (errors.length > 0) return res.status(400).json({ errors: errors });
-    const { name, statement, timelimit, memorylimit, testcases } = req.body;
+    const { name, difficulty, statement, timelimit, memorylimit, testcases } = req.body;
     try {
         let problem = await Problem.find({ name: req.body.name });
         if (problem.length > 0) return res.status(400).json({ errors: [{ msg : "Problem already exists" }]});
 
-        problem = new Problem({ name, statement, timelimit, memorylimit, testcases });
+        problem = new Problem({ name, difficulty, statement, timelimit, memorylimit, testcases });
         await problem.save();
 
         return res.status(200).json(req.body);

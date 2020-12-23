@@ -8,6 +8,10 @@ const Submission = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     },
+    submission: {
+        type: String, 
+        required: true
+    },
     verdict: {
         type: String,
         required: true
