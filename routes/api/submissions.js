@@ -1,7 +1,12 @@
 const express = require('express');
-const { spawn } = require('child_process');
 const upload = require('express-fileupload');
 const router = express.Router();
+const exec_code = require('../../code_execution/code_exec');
+const Problem = require('../../models/Problem');
+
+const Submission = require('../../models/Submission');
+
+const auth = require('./auth')
 
 router.use(upload());
 
@@ -14,46 +19,44 @@ router.get('/', (req, res) => {
 
 // @route   POST /api/submissions/
 // @desc    Upload submission
-// @access  Public
-router.post('/', async (req, res) => {
-    //let file = req.files.submission;
+// @access  Private
+router.post('/', auth, async (req, res) => {
+    if (!req.files || !req.files.submission || !req.body.problem || !req.user) return res.status(400).json({ errors: [{msg: "Invalid request"}]});
+    const { user : { id }, body : { problem }, files: { submission }} = req;
+    const filename = id + "_" + problem, filetype = "cpp";
+    submission.name = filename;
     try {
-        const { input } = req.body;
-        const exec_code = (input) => {
-            const compile = spawn('g++ -std=c++17 -Wshadow -Wall -o "jump_choreo" "jump_choreo.cpp"  -O2 -Wno-unused-result', {shell: true, cwd: "submissions"});
-            var out = [];
-            compile.on('exit', () => {
-                input.forEach((inp, idx) => {
-                    let child = spawn('jump_choreo.exe', { shell: true, cwd: "submissions"});
-            
-                    child.stdin.setEncoding('utf-8');
-                
-                    child.stdin.write(inp);
-                    child.stdin.end();
-                
-                    var ret = "";
-                
-                    child.stdout.on('data', (data) => {
-                        ret += data.toString('utf-8');
-                        child.stdout.once('drain', () => {});
-                    });
-                
-                    child.on('exit', () => {
-                        out.push(ret);
-                        if (idx == input.length - 1) {
-                            spawn('del /f jump_choreo.exe', {shell: true, cwd: "submissions"});
-                            res.json({ output: out });
-                        }
-                    });
-                });
-            });
+        await submission.mv('submissions/' + filename + "." + filetype);
+        let input = await Problem.findOne({ _id: problem }).select('testcases');
+        const output = exec_code(input.testcases.map(inp => inp.input), filename, filetype);
+        const test_output = input.testcases.map((inp) => inp.output);
+        
+        let verdict = -1;
+
+        for (var i = 0; i < test_output.length; i++) {
+            if (output[i] !== test_output[i]) {
+                verdict = i;
+                break;
+            }
         }
-        exec_code(input);
+
+        verdict = (verdict === -1 ? "Accepted" : `WA on test ${verdict + 1}`);
+        const file = submission.data.toString('utf-8');
+
+        let submission_obj = new Submission({
+            name: problem, 
+            user: id, 
+            submission: file,
+            verdict, 
+            language: "cpp"
+        });
+        await submission_obj.save();
+        
+        res.json({ verdict });
     } 
     catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).send("Server Error");
     }
-})
-
+});
 module.exports = router;
