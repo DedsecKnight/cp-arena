@@ -11,11 +11,37 @@ const auth = require('./auth')
 
 router.use(upload());
 
-// @route   /api/submissions/
-// @desc    Test route
-// @access  Public
-router.get('/', (req, res) => {
-    res.send("Submission route OK");
+// @route   GET /api/submissions/me
+// @desc    Get current user's submissions
+// @access  Private
+router.get('/me', auth, async (req, res) => {
+    try {
+        let user_submission = await User.findOne({ _id: req.user.id }).populate('submission', ['name', 'submission', 'verdict']).select('submission');
+        user_submission = user_submission.submission;
+        var ret = [];
+        user_submission.forEach(async (submit) => {
+            try {
+                const { _id, submission, verdict } = submit;
+                let problem_name = await Problem.findOne({ _id: submit.name }).select('name');
+                problem_name = problem_name.name;
+                ret.push({
+                    _id, 
+                    name: problem_name,
+                    submission, 
+                    verdict
+                });
+                if (ret.length == user_submission.length) res.json(ret);
+            } 
+            catch (error) {
+                console.error(error.message);
+                res.status(500).send("Server Error");
+            }
+        });
+    } 
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");
+    }
 })
 
 // @route   POST /api/submissions/
@@ -49,7 +75,7 @@ router.post('/', auth, async (req, res) => {
             user: id, 
             submission: file,
             verdict, 
-            language: "cpp"
+            language: filetype
         });
         
         
@@ -66,4 +92,19 @@ router.post('/', auth, async (req, res) => {
         res.status(500).send("Server Error");
     }
 });
+
+// @route   GET /api/submissions/:problem_id
+// @desc    Get all submissions for problem with problem_id
+// @access  Public
+router.get('/:problem_id', async (req, res) => {
+    try {
+        const submission_list = await Submission.find({ name: req.params.problem_id });
+        res.json(submission_list);
+    } 
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");    
+    }
+});
+
 module.exports = router;
