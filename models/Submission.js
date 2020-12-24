@@ -19,6 +19,10 @@ const Submission = new mongoose.Schema({
     language: {
         type: String, 
         required: true
+    }, 
+    date: {
+        type: Date, 
+        default: Date.now
     }
 });
 

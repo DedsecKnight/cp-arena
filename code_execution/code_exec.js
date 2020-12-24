@@ -6,7 +6,7 @@ const exec_code = (input, filename, filetype) => {
         cwd: "submissions"
     });
     var out = [];
-    input.forEach((inp, idx) => {
+    input.forEach((inp) => {
         let child = spawnSync(`${filename}.exe`, {
             shell: true, 
             cwd: "submissions", 
