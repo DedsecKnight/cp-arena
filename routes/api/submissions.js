@@ -2,9 +2,10 @@ const express = require('express');
 const upload = require('express-fileupload');
 const router = express.Router();
 const exec_code = require('../../code_execution/code_exec');
-const Problem = require('../../models/Problem');
 
+const Problem = require('../../models/Problem');
 const Submission = require('../../models/Submission');
+const User = require('../../models/User');
 
 const auth = require('./auth')
 
@@ -50,8 +51,14 @@ router.post('/', auth, async (req, res) => {
             verdict, 
             language: "cpp"
         });
-        await submission_obj.save();
         
+        
+        let user = await User.findOne({ _id : id });
+        user.submission.unshift(submission_obj._id);
+
+        await user.save();
+        await submission_obj.save();
+
         res.json({ verdict });
     } 
     catch (error) {
