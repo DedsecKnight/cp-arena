@@ -1,0 +1,7 @@
+export const USER_LOGIN = "USER_LOGIN";
+export const USER_LOGOUT = "USER_LOGOUT";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_FAILED = "LOGIN_FAILED";
+export const UPDATE_USER = "UPDATE_USER";
+export const GET_SUBMISSION = "GET_SUBMISSION";
+export const FETCH_SUBMISSION_ERROR = "FETCH_SUBMISSION_ERROR";
