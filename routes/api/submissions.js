@@ -16,33 +16,20 @@ router.use(upload());
 // @access  Private
 router.get('/me', auth, async (req, res) => {
     try {
-        let user_submission = await User.findOne({ _id: req.user.id }).populate('submission', ['name', 'submission', 'verdict']).select('submission');
-        user_submission = user_submission.submission;
-        var ret = [];
-        user_submission.forEach(async (submit) => {
-            try {
-                const { _id, submission, verdict } = submit;
-                let problem_name = await Problem.findOne({ _id: submit.name }).select('name');
-                problem_name = problem_name.name;
-                ret.push({
-                    _id, 
-                    name: problem_name,
-                    submission, 
-                    verdict
-                });
-                if (ret.length == user_submission.length) res.json(ret);
-            } 
-            catch (error) {
-                console.error(error.message);
-                res.status(500).send("Server Error");
-            }
+        let user_submission = await User.findOne({ _id: req.user.id }).populate('submission', ['name', 'submission', 'verdict', 'date']).select('submission');
+        await Submission.populate(user_submission, {
+            path: 'submission.name',
+            select: 'name',
+            model: Problem
         });
+        res.json(user_submission.submission);
+        
     } 
     catch (error) {
         console.error(error.message);
         res.status(500).send("Server Error");
     }
-})
+});
 
 // @route   POST /api/submissions/
 // @desc    Upload submission
@@ -50,18 +37,18 @@ router.get('/me', auth, async (req, res) => {
 router.post('/', auth, async (req, res) => {
     if (!req.files || !req.files.submission || !req.body.problem || !req.user) return res.status(400).json({ errors: [{msg: "Invalid request"}]});
     const { user : { id }, body : { problem }, files: { submission }} = req;
-    const filename = id + "_" + problem, filetype = "cpp";
-    submission.name = filename;
+    const filename = id + "_" + problem, filetype = submission.name.substring(submission.name.indexOf(".")+1, submission.name.length);
+    submission.name = filename + "." + filetype;
     try {
-        await submission.mv('submissions/' + filename + "." + filetype);
+        await submission.mv('submissions/' + submission.name);
         let input = await Problem.findOne({ _id: problem }).select('testcases');
-        const output = exec_code(input.testcases.map(inp => inp.input), filename, filetype);
-        const test_output = input.testcases.map((inp) => inp.output);
+        const user_output = exec_code(input.testcases.map(inp => inp.input), filename, filetype);
+        const judge_output = input.testcases.map((inp) => inp.output);
         
         let verdict = -1;
 
-        for (var i = 0; i < test_output.length; i++) {
-            if (output[i] !== test_output[i]) {
+        for (var i = 0; i < judge_output.length; i++) {
+            if (user_output[i] !== judge_output[i]) {
                 verdict = i;
                 break;
             }

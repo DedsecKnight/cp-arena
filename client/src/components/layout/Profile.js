@@ -1,10 +1,12 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment } from 'react'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types'
 import Moment from 'react-moment';
 
-const Profile = ({ auth : { user, submissionsData : { submissions, currMaxSubmit, currMaxAC, solvedProblems } } }) => {
+const Profile = ({ auth : { user }, submission }) => {
     const { name, handle, description } = user;
+    const { submissions, currMaxAC, currMaxSubmit, solvedProblems } = submission;
+    
     return (
         <Fragment>
             <section className="container">
@@ -46,34 +48,12 @@ const Profile = ({ auth : { user, submissionsData : { submissions, currMaxSubmit
                             {submissions.map((submission, idx)=> idx < 5 && (
                                 <tr key={idx}>
                                     <th scope="row">{idx+1}</th>
-                                    <td className="hide-sm"><a href="#">{submission._id}</a></td>
-                                    <td><a href="#">{submission.name}</a></td>
+                                    <td className="hide-sm"><a href="!#">{submission._id}</a></td>
+                                    <td><a href="!#">{submission.name.name}</a></td>
                                     <td className="hide-sm"><Moment format="YY/MM/DD -  HH:mm" local>{submission.date}</Moment></td>
                                     <td className={submission.verdict === "Accepted" ? "accepted" : "wa"}>{submission.verdict}</td>
                                 </tr>
                             ))}
-                        
-                        {/* <tr>
-                            <th scope="row">2</th>
-                            <td><a href="#">122456</a></td>
-                            <td><a href="#">Two Sums</a></td>
-                            <td className="hide-sm">2020/12/16</td>
-                            <td className="accepted">Accepted</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td><a href="#">113456</a></td>
-                            <td><a href="#">Longest Increasing Subsequence</a></td>
-                            <td className="hide-sm">2020/12/15</td>
-                            <td className="wa">WA in test 2</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">4</th>
-                            <td><a href="#">100456</a></td>
-                            <td><a href="#">Recover Binary Search Tree</a></td>
-                            <td className="hide-sm">2020/12/15</td>
-                            <td className="wa">TLE on test 3</td>
-                        </tr> */}
                         </tbody>
                     </table>
                 </div>
@@ -85,11 +65,13 @@ const Profile = ({ auth : { user, submissionsData : { submissions, currMaxSubmit
 }
 
 Profile.propTypes = {
-    auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired,
+    submission: PropTypes.object.isRequired
 }
 
 const state_prop = state => ({
-    auth: state.auth
+    auth: state.auth,
+    submission: state.submission
 })
 
 export default connect(state_prop, null)(Profile)

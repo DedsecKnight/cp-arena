@@ -98,4 +98,18 @@ router.get('/hard', async (req, res) => {
     }
 });
 
+// @route   GET /api/problems/:id
+// @desc    Get problem by ID
+// @access  Public
+router.get('/:id', async (req, res) => {
+    try {
+        const problem = await Problem.find({ _id: req.params.id });
+        return res.status(200).json(problem);
+    } 
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");
+    }
+})
+
 module.exports = router;

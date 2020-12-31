@@ -8,10 +8,10 @@ const router = express.Router();
 const auth = require('./auth');
 
 
-// @route   POST /api/users/
+// @route   POST /api/users/register
 // @desc    Register a user
 // @access  Public
-router.post('/', [
+router.post('/register', [
     check('handle', 'A handle is required').not().isEmpty(),
     check('email', 'An email is required').not().isEmpty(),
     check('email', 'Invalid email entered').isEmail(),
@@ -56,12 +56,12 @@ router.post('/', [
     }
 });
 
-// @route   GET /api/users/
+// @route   POST /api/users/login
 // @desc    Login user
 // @access  Public
-router.get('/', [
-    check('email', 'Email is required').not().isEmpty(),
-    check('password', 'Password is required').not().isEmpty()
+router.post('/login', [
+    check("email", 'Email is required').not().isEmpty(),
+    check("password", 'Password is required').not().isEmpty()
 ], async (req, res) => {
     const errors = validationResult(req).array();
     if (errors.length > 0) return res.status(400).json({ errors: errors });
@@ -80,7 +80,7 @@ router.get('/', [
         });    
     } 
     catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).send("Server Error");
     }
 });
@@ -91,7 +91,7 @@ router.get('/', [
 // @access  Private
 router.get('/me', auth, async (req, res) => {
     try {
-        const me = await User.findOne({ _id: req.user.id });
+        const me = await User.findOne({ _id: req.user.id }).select('-password');
         return res.status(200).json(me);
     } 
     catch (error) {

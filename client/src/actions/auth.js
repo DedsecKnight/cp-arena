@@ -1,5 +1,7 @@
-import { USER_LOGIN, USER_LOGOUT, LOGIN_FAILED, UPDATE_USER, GET_SUBMISSION, FETCH_SUBMISSION_ERROR, UPDATE_SUBMISSION_STAT } from '../actionTypes';
-import {setAuthToken} from '../utilities/setToken';
+import { USER_LOGIN, USER_LOGOUT, LOGIN_FAILED, UPDATE_USER } from '../actionTypes';
+import { setAuthToken } from '../utilities/setToken';
+import { getSubmission } from './submission';
+import { resetTab } from './navTab';
 
 import axios from 'axios';
 
@@ -30,19 +32,7 @@ export const loginUser = (data) => async dispatch => {
     }
 }
 
-export const getSubmission = () => async dispatch => {
-    try {
-        const res = await axios.get('http://localhost:5000/api/submissions/me');
-        res.data.forEach((submission) => dispatch({ type: UPDATE_SUBMISSION_STAT, payload: submission }));
-        dispatch({ type: GET_SUBMISSION, payload: res.data });  
-          
-    } 
-    catch (error) {
-        dispatch({ type: FETCH_SUBMISSION_ERROR });
-        console.error(error.response);
-    }
-}
-
 export const logoutUser = () => dispatch => {
     dispatch({ type: USER_LOGOUT });
+    dispatch(resetTab());
 }
