@@ -1,10 +1,19 @@
-import { USER_LOGIN, USER_LOGOUT, UPDATE_USER, LOGIN_FAILED, GET_SUBMISSION, FETCH_SUBMISSION_ERROR} from '../actionTypes';
+import { USER_LOGIN, USER_LOGOUT, UPDATE_USER, LOGIN_FAILED, GET_SUBMISSION, FETCH_SUBMISSION_ERROR, UPDATE_SUBMISSION_STAT } from '../actionTypes';
 
 const initialState = {
     authenticated: false,
     user: null, 
     token: localStorage.getItem("token"),
-    submissions: null,
+    submissionsData: {
+        submissions: [],
+        submissionCount: {},
+        acceptedCount: {},
+        maxAC: 0,
+        maxSubmit: 0,
+        currMaxAC: "",
+        currMaxSubmit: "",
+        solvedProblems: 0
+    },
     loading: true
 };
 
@@ -22,7 +31,6 @@ const reducer = (state = initialState, action) => {
             localStorage.setItem('token', payload.token);
             return ({
                 ...state,
-                loading: false,
                 token: payload.token
             });
         case LOGIN_FAILED:
@@ -33,19 +41,62 @@ const reducer = (state = initialState, action) => {
                 token: null,
                 user: null,
                 loading: false,
-                authenticated: false
+                authenticated: false,
+                submissionsData: {
+                    submissions: [],
+                    submissionCount: {},
+                    acceptedCount: {},
+                    maxAC: 0,
+                    maxSubmit: 0,
+                    currMaxAC: "",
+                    currMaxSubmit: "",
+                    solvedProblems: 0
+                }
             };
+        case UPDATE_SUBMISSION_STAT:
+            const subCount = state.submissionsData.submissionCount ? (state.submissionsData.submissionCount[payload.name] || 0) : 0;
+            const acCount = state.submissionsData.acceptedCount ? (state.submissionsData.acceptedCount[payload.name] || 0) : 0;
+            return ({
+                ...state,
+                submissionsData: {
+                    ...state.submissionsData,
+                    submissionCount: {
+                        ...state.submissionsData.submissionCount,
+                        [payload.name]: subCount + 1
+                    },
+                    acceptedCount: {
+                        ...state.submissionsData.acceptedCount,
+                        [payload.name]: acCount + (payload.verdict === "Accepted")
+                    },
+                    maxAC: Math.max(state.submissionsData.maxAC, acCount + (payload.verdict === "Accepted")),
+                    maxSubmit: Math.max(state.submissionsData.maxSubmit, subCount + 1),
+                    currMaxAC: (state.submissionsData.maxAC < acCount + (payload.verdict === "Accepted") ? payload.name : state.submissionsData.currMaxAC),
+                    currMaxSubmit: (state.submissionsData.maxSubmit < subCount + 1 ? payload.name : state.submissionsData.currMaxSubmit),
+                    solvedProblems: Object.keys(state.submissionsData.acceptedCount).filter((key) => state.submissionsData.acceptedCount[key] > 0).length + (acCount === 0 && payload.verdict === "Accepted")
+                }
+            });
         case GET_SUBMISSION:
             return {
                 ...state,
-                loading: false,
-                submissions: payload
+                submissionsData: {
+                    ...state.submissionsData,
+                    submissions: payload
+                }
             }
         case FETCH_SUBMISSION_ERROR:
             return {
                 ...state,
-                loading: false,
-                submissions: null
+                loading: true,
+                submissionsData: {
+                    submissions: [],
+                    submissionCount: {},
+                    acceptedCount: {},
+                    maxAC: 0,
+                    maxSubmit: 0,
+                    currMaxAC: "",
+                    currMaxSubmit: "",
+                    solvedProblems: 0
+                }
             }
         default:
             return state;

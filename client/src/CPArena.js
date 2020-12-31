@@ -9,8 +9,7 @@ import Main from './components/layout/Main';
 
 const CPArena = ({ auth : { token, authenticated, loading }, updateUser, logoutUser }) => {
     useEffect(() => {
-        if (token) updateUser(token);
-        else logoutUser();
+        updateUser(token);
     }, []);
     return (
         <Fragment>

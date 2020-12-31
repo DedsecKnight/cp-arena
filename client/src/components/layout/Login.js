@@ -9,9 +9,9 @@ const Login = ({ loginUser }) => {
         password: ''
     });
 
-    const submit = (e) => {
+    const submit = async (e) => {
         e.preventDefault(); 
-        loginUser(formData);
+        await loginUser(formData);
     }
 
     const update = (e) => {
