@@ -1,4 +1,4 @@
-import { GET_SUBMISSION, NEW_SUBMISSION, FETCH_SUBMISSION_ERROR } from '../actionTypes';
+import { GET_SUBMISSION, NEW_SUBMISSION, FETCH_SUBMISSION_ERROR, RESET_SUBMISSION } from '../actionTypes';
 
 const initialState = {
     submissions: [],
@@ -38,6 +38,7 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 submissions: payload
             }
+        case RESET_SUBMISSION:
         case FETCH_SUBMISSION_ERROR:
             return initialState
         default: 

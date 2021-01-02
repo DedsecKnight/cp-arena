@@ -1,6 +1,6 @@
 import { USER_LOGIN, USER_LOGOUT, LOGIN_FAILED, UPDATE_USER } from '../actionTypes';
 import { setAuthToken } from '../utilities/setToken';
-import { getSubmission } from './submission';
+import { clearSubmission, getSubmission } from './submission';
 import { resetTab } from './navTab';
 
 import axios from 'axios';
@@ -35,4 +35,5 @@ export const loginUser = (data) => async dispatch => {
 export const logoutUser = () => dispatch => {
     dispatch({ type: USER_LOGOUT });
     dispatch(resetTab());
+    dispatch(clearSubmission());
 }

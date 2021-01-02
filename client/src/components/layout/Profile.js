@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types'
 import Moment from 'react-moment';
@@ -8,8 +8,6 @@ const Profile = ({ auth : { user }, submission }) => {
     const { submissions, currMaxAC, currMaxSubmit, solvedProblems } = submission;
     
     return (
-        <Fragment>
-            <section className="container">
             <div className="user-profile">
                 <div className="user-top">
                     <img className="round-img my-1" src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200" alt="" />
@@ -58,9 +56,7 @@ const Profile = ({ auth : { user }, submission }) => {
                     </table>
                 </div>
             </div>
-        </section>
-
-        </Fragment>   
+ 
     )
 }
 

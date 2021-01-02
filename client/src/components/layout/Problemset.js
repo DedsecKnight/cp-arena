@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import axios from 'axios';
 
 const Problemset = () => {
@@ -13,7 +13,7 @@ const Problemset = () => {
     }, []);
 
     return (
-        <section className="container">
+        <Fragment>
             <h2 className="my-5">Let's solve some problems</h2>
             <div className="problem-list">
                 <table className="table">
@@ -39,7 +39,7 @@ const Problemset = () => {
                     </tbody>
                 </table>
             </div>
-        </section>
+        </Fragment>
     )
 }
 

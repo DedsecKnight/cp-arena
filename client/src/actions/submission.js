@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_SUBMISSION, NEW_SUBMISSION, FETCH_SUBMISSION_ERROR } from '../actionTypes';
+import { GET_SUBMISSION, NEW_SUBMISSION, FETCH_SUBMISSION_ERROR, RESET_SUBMISSION } from '../actionTypes';
 
 export const getSubmission = () => async dispatch => {
     try {
@@ -12,4 +12,8 @@ export const getSubmission = () => async dispatch => {
         dispatch({ type: FETCH_SUBMISSION_ERROR });
         console.error(error.response);
     }
+}
+
+export const clearSubmission = () => dispatch => {
+    dispatch({ type: RESET_SUBMISSION });
 }

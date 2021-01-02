@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { loginUser } from '../../actions/auth';
 
 const Login = ({ loginUser }) => {
+    const history = useHistory();
+
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -12,6 +15,7 @@ const Login = ({ loginUser }) => {
     const submit = async (e) => {
         e.preventDefault(); 
         await loginUser(formData);
+        history.push('/');
     }
 
     const update = (e) => {
