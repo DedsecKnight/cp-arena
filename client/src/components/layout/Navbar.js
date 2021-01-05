@@ -7,7 +7,7 @@ import { updateTab } from '../../actions/navTab';
 
 const Navbar = ({ logoutUser, currentTab, updateTab }) => {
     return (
-        <nav className="navbar">
+        <nav className="navbar sticky-top">
             <div className="logo">
                 <h2><i className="fas fa-code"></i> CP-Arena</h2>
             </div>
