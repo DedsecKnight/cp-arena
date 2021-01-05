@@ -12,6 +12,17 @@ const Problem = new mongoose.Schema({
         type: String, 
         required: true
     }, 
+    inputSpecification: {
+        type: String, 
+        default: "No input specification available"
+    },
+    outputSpecification: {
+        type: String, 
+        default: "No output specification available"
+    },
+    hint: [{
+        type: String
+    }],
     timelimit: {
         type: Number, 
         required: true
@@ -29,7 +40,22 @@ const Problem = new mongoose.Schema({
             type: String, 
             required: true
         }
-    }]
+    }],
+    acceptedCount: {
+        type: Number, 
+        default: 0
+    },
+    submissionCount: {
+        type: Number, 
+        default: 0
+    },
+    validatorRequired: {
+        type: Boolean,
+        default: false
+    },
+    validatorCode: {
+        type: String
+    }
 });
 
 const ProblemModel = mongoose.model('problem', Problem);
