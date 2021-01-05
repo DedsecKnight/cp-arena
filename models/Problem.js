@@ -41,6 +41,19 @@ const Problem = new mongoose.Schema({
             required: true
         }
     }],
+    sampleTestCases: [{
+        input: {
+            type: String, 
+            required: true
+        }, 
+        output: {
+            type: String, 
+            required: true
+        },
+        explanation: {
+            type: String
+        }
+    }],
     acceptedCount: {
         type: Number, 
         default: 0
