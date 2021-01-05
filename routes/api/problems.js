@@ -131,7 +131,7 @@ router.get('/hard', async (req, res) => {
 // @access  Public
 router.get('/:id', async (req, res) => {
     try {
-        const problem = await Problem.find({ _id: req.params.id });
+        const problem = await Problem.findOne({ _id: req.params.id });
         return res.status(200).json(problem);
     } 
     catch (error) {

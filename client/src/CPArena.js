@@ -12,15 +12,16 @@ import Navbar from './components/layout/Navbar';
 import ProtectedComponent from './components/utilities/ProtectedComponent';
 import Snippet from './components/layout/Snippet';
 import ProblemWriting from './components/layout/ProblemWriting';
+import Problem from './components/layout/Problem';
 
 const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab }) => {
     useEffect(() => {
         updateUser(token);
-    }, [updateUser, token]);
+    }, []);
     return (
         !loading && (<Router>
+            {!authenticated && (<Route path="/login" exact component={Login} />)}
             {authenticated && (<Navbar currentTab={navTab}/>)}
-                {!authenticated && (<Route path="/login" exact component={Login} />)}
                 (<section className="container">
                     <Switch>
                         <ProtectedComponent path="/" exact component={Profile} />
@@ -29,7 +30,8 @@ const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab 
                         <ProtectedComponent path="/snippet" exact component={Snippet}/>
                         
                         <ProtectedComponent path="/problemwriting" exact component={ProblemWriting}/>  
-                        <Redirect from="*" to="/" />
+                        <ProtectedComponent path="/problemset/:id" exact component={Problem} />
+                        {/* <Redirect from="*" to="/" /> */}
                     </Switch>
                 </section>)
         </Router>)

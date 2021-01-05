@@ -10,8 +10,8 @@ const ProblemWriting = () => {
                     <input type="text" className="form-control" name="name" placeholder="Problem name" />
                 </div>
                 <div className="form-group">
-                    <select name="difficulty" className="form-control">
-                        <option selected>Choose a difficulty</option>
+                    <select name="difficulty" className="form-control" defaultValue="">
+                        <option value="">Choose a difficulty</option>
                         <option value="easy">Easy</option>
                         <option value="normal">Normal</option>
                         <option value="hard">Hard</option>

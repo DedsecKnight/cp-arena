@@ -192,6 +192,14 @@ strong {
   margin-top: 1rem;
 }
 
+.title {
+  margin-bottom: 2rem; 
+}
+
+.center-text {
+  text-align: center;
+}
+
 
 @media (max-width: 700px) {
   .user-profile {

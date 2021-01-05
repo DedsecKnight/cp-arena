@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Problemset = () => {
@@ -30,7 +31,7 @@ const Problemset = () => {
                         {problemSet.map((problem, idx) => (
                             <tr key={idx}>
                                 <th scope="row">{idx+1}</th>
-                                <td><a href="!#">{problem.name}</a></td>
+                                <td><Link to={`/problemset/${problem._id}`}>{problem.name}</Link></td>
                                 <td className={problem.difficulty}><strong>{problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}</strong></td>
                                 <td className="hide-sm">{problem.submissionCount}</td>
                                 <td className="hide-sm">{problem.acceptedCount}</td>
