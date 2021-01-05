@@ -21,10 +21,10 @@ const ProblemWriting = () => {
                     <textarea name="statement" cols="30" rows="10" className="form-control" placeholder="Problem Statement"></textarea>
                 </div>
                 <div className="form-group">
-                    <textarea name="inputSpec" cols="30" rows="5" className="form-control" placeholder="Input description"></textarea>
+                    <textarea name="inputSpecification" cols="30" rows="5" className="form-control" placeholder="Input description"></textarea>
                 </div>
                 <div className="form-group">
-                    <textarea name="outputSpec" cols="30" rows="5" className="form-control" placeholder="Output description"></textarea>
+                    <textarea name="outputSpecification" cols="30" rows="5" className="form-control" placeholder="Output description"></textarea>
                 </div>
                 <div className="form-group">
                     <p className="lead">Upload validator script</p>
