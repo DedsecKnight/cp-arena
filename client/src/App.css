@@ -115,6 +115,15 @@ a:hover {
   border-radius: 15px;
 }
 
+.problem-btn {
+  margin-right: 0.5rem;
+}
+
+.problem-action {
+  display: flex;
+  justify-content: flex-start;
+}
+
 ul {
   list-style-type: none;
 }
@@ -173,21 +182,18 @@ strong {
   flex-direction: column;
   justify-content: space-around;
 }
-.test-case {
+.test-case, .hint {
   padding: 2rem 0;
   border-top: 2px dotted #ccc;
 }
 
 .case-action > button {
   margin-right: 1rem;
+  margin-top: 1rem;
 }
 
 
 @media (max-width: 700px) {
-  .login-container {
-    width: 70% !important;
-    left: 15%;
-  }
   .user-profile {
       display: flex !important;
       flex-direction: column;
@@ -201,5 +207,8 @@ strong {
   .case-action {
       display: flex;
       justify-content: space-evenly;
+  }
+  .problem-action {
+      justify-content: space-around;
   }
 }
