@@ -20,19 +20,6 @@ const Problem = new mongoose.Schema({
         type: String, 
         default: "No output specification available"
     },
-    sampleTestCase: [{
-        input: {
-            type: String, 
-            required: true
-        }, 
-        output: {
-            type: String, 
-            required: true
-        },
-        explanation: {
-            type: String
-        }
-    }],
     hint: [{
         type: String
     }],
