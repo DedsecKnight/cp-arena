@@ -63,7 +63,7 @@ const Problem = ({ match, auth : { loading } }) => {
             <div className="my-5">
                 <h1 className="title center-text">{name}</h1>
                 <p className="lead center-text"><strong>Time Limit</strong>: {timelimit} seconds</p>
-                <p className="lead center-text"><strong>Memory Limit</strong>: {memorylimit} seconds</p>
+                <p className="lead center-text"><strong>Memory Limit</strong>: {memorylimit} MB</p>
             </div>
 
             <div className="problem-statement">
