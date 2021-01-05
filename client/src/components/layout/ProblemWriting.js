@@ -4,7 +4,7 @@ import React, { Fragment } from 'react'
 const ProblemWriting = () => {
     return (
         <Fragment>
-            <h2 className="my-5">Propose a problem here</h2>
+            <h2 className="my-3">Propose a problem here</h2>
             <form className="cparena-form">
                 <div className="form-group">
                     <input type="text" className="form-control" name="name" placeholder="Problem name" />

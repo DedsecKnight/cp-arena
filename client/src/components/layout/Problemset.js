@@ -14,7 +14,7 @@ const Problemset = () => {
 
     return (
         <Fragment>
-            <h2 className="my-5">Let's solve some problems</h2>
+            <h2 className="my-3">Let's solve some problems</h2>
             <div className="problem-list">
                 <table className="table">
                     <thead>
@@ -32,8 +32,8 @@ const Problemset = () => {
                                 <th scope="row">{idx+1}</th>
                                 <td><a href="!#">{problem.name}</a></td>
                                 <td className={problem.difficulty}><strong>{problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}</strong></td>
-                                <td className="hide-sm">300</td>
-                                <td className="hide-sm">200</td>
+                                <td className="hide-sm">{problem.submissionCount}</td>
+                                <td className="hide-sm">{problem.acceptedCount}</td>
                             </tr>
                         ))}
                     </tbody>

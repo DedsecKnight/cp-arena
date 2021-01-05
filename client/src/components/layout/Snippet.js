@@ -4,7 +4,7 @@ import React, { Fragment } from 'react'
 const Snippet = () => {
     return (
         <Fragment>
-            <h2 className="my-5">Your snippets</h2>
+            <h2 className="my-3">Your snippets</h2>
             <table className="table">
                 <thead>
                 <tr>

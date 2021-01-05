@@ -20,18 +20,18 @@ const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab 
     return (
         !loading && (<Router>
             {authenticated && (<Navbar currentTab={navTab}/>)}
-            <Switch>
                 {!authenticated && (<Route path="/login" exact component={Login} />)}
                 (<section className="container">
-                    <ProtectedComponent path="/" exact component={Profile} />
-                    <ProtectedComponent path="/problemset" exact component={Problemset}/>
-                    
-                    <ProtectedComponent path="/snippet" exact component={Snippet}/>
-                    
-                    <ProtectedComponent path="/problemwriting" exact component={ProblemWriting}/>  
+                    <Switch>
+                        <ProtectedComponent path="/" exact component={Profile} />
+                        <ProtectedComponent path="/problemset" exact component={Problemset}/>
+                        
+                        <ProtectedComponent path="/snippet" exact component={Snippet}/>
+                        
+                        <ProtectedComponent path="/problemwriting" exact component={ProblemWriting}/>  
+                        <Redirect from="*" to="/" />
+                    </Switch>
                 </section>)
-                <Redirect from="*" to="/" />
-            </Switch>
         </Router>)
     )
 }
