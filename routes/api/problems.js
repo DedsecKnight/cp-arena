@@ -36,16 +36,44 @@ router.post('/',  [
             if (!obj.output || obj.output.length == 0) throw new Error('Test case output is required');
         });
         return true;
+    }),
+    body('sampleTestCases').custom((arr) => {
+        if (arr.length < 1) throw new Error('At least 1 test cases is required');
+        arr.forEach(obj => {
+            if (!obj.input || obj.input.length == 0) throw new Error('Test case input is required');
+            if (!obj.output || obj.output.length == 0) throw new Error('Test case output is required');
+        });
+        return true;
+    }),
+    body('validatorCode').custom((code, { req }) => {
+        if (!code && req.body.validatorRequired) throw new Error('Validator Code is required');
+        return true;
     })
 ], async (req, res) => {
     const errors = validationResult(req).array();
     if (errors.length > 0) return res.status(400).json({ errors: errors });
-    const { name, difficulty, statement, timelimit, memorylimit, testcases } = req.body;
+    const { name, difficulty, statement, inputSpecification, outputSpecification, hint, sampleTestCases, validatorRequired, timelimit, memorylimit, testcases } = req.body;
     try {
         let problem = await Problem.find({ name: req.body.name });
         if (problem.length > 0) return res.status(400).json({ errors: [{ msg : "Problem already exists" }]});
 
-        problem = new Problem({ name, difficulty, statement, timelimit, memorylimit, testcases });
+        problem = { 
+            name, 
+            difficulty, 
+            statement, 
+            inputSpecification, 
+            outputSpecification, 
+            hint, 
+            timelimit, 
+            memorylimit, 
+            testcases,
+            sampleTestCases,
+            validatorRequired
+        };
+
+        if (validatorRequired) problem.validatorCode = req.body.validatorCode;
+        problem = new Problem(problem);
+
         await problem.save();
 
         return res.status(200).json(req.body);
