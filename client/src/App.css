@@ -119,7 +119,7 @@ a:hover {
   margin-right: 0.5rem;
 }
 
-.problem-action {
+.problem-action, .snippet-action{
   display: flex;
   justify-content: flex-start;
 }
@@ -187,7 +187,7 @@ strong {
   border-top: 2px dotted #ccc;
 }
 
-.button-action > button {
+.case-action > button {
   margin-right: 1rem;
   margin-top: 1rem;
 }
@@ -200,6 +200,19 @@ strong {
   text-align: center;
 }
 
+.delete-button {
+  line-height: 1rem;
+}
+
+.CodeMirror {
+  border-radius: 10px;
+  font-size: 16px;
+  height: 500px !important;
+}
+
+.add-snippet {
+  border-top: 2px dotted #ccc;
+}
 
 @media (max-width: 700px) {
   .container {
@@ -219,7 +232,7 @@ strong {
       display: flex;
       justify-content: space-evenly;
   }
-  .problem-action {
+  .problem-action, .snippet-action {
       justify-content: space-around;
   }
 }
