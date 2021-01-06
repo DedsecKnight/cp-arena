@@ -5,6 +5,7 @@ import CodeEditor from '../utilities/CodeEditor'
 const Snippet = () => {
     const [code, setCode] = useState("");
     const [name, changeName] = useState("");
+    const [language, setLanguage] = useState("");
     const [editorOption, setOption] = useState({
         mode: '',
         indentWithTabs: true,
@@ -18,7 +19,13 @@ const Snippet = () => {
     });
     
     const changeLanguage = (e) => {
+        setLanguage(e.target.value);
         setOption({...editorOption, mode: e.target.value});
+    }
+
+    const submit = (e) => {
+        e.preventDefault();
+        console.log({ name, code, language });
     }
 
     return (
@@ -60,7 +67,7 @@ const Snippet = () => {
             </table>
             <div className="my-5 add-snippet">
                 <h2 className="my-4">Create your Snippet below</h2>
-                <form>
+                <form onSubmit={e => submit(e)}>
                     <div className="form-group">
                         <input type="text" placeholder="Enter Snippet Name" value={name} onChange={e => changeName(e.target.value)} className="form-control"/>
                     </div>
