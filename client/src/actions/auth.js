@@ -15,6 +15,7 @@ export const updateUser = (token) => async dispatch => {
     } 
     catch (error) {
         dispatch({ type: LOGIN_FAILED });
+        dispatch(resetTab());
         console.error(error);
     }
 }
@@ -28,6 +29,7 @@ export const loginUser = (data) => async dispatch => {
     } 
     catch (error) {
         dispatch({ type: LOGIN_FAILED });
+        dispatch(resetTab());
         console.error(error);
     }
 }
