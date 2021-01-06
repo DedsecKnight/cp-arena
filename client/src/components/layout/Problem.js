@@ -1,14 +1,11 @@
-import React, { Fragment, memo, useEffect, useState } from 'react'
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
-const Problem = ({ match, auth : { loading } }) => {
-    const [problem, initializeProblem] = useState({
-        hint: [],
-        sampleTestCases: []
-    });
+const Problem = ({ match }) => {
+    const [hintIndex, setIndex] = useState(0);
+    const [initialized, setInitialized] = useState(false);
+    const [problem, initializeProblem] = useState({});
 
     const parseInput = (input) => {
         return input.split('\n');
@@ -17,6 +14,7 @@ const Problem = ({ match, auth : { loading } }) => {
     const fetchProblem = async (id) => {
         const res = await axios.get(`http://localhost:5000/api/problems/${id}`);
         initializeProblem(res.data); 
+        setInitialized(true);
     }
 
     useEffect(() => {
@@ -35,7 +33,7 @@ const Problem = ({ match, auth : { loading } }) => {
     } = problem;
 
     return (
-        (!loading && <Fragment>
+        (initialized && <Fragment>
             <div className="problem-action">
                 <Link className="btn problem-btn btn-light" to="/problemset">Go back to Problemset</Link>
                 <button className="btn btn-info problem-btn" disabled={hint.length === 0 && ("disabled")} data-toggle="modal" data-target="#problemHint">Get Hint</button>
@@ -44,19 +42,19 @@ const Problem = ({ match, auth : { loading } }) => {
             
             <div className="modal fade" id="problemHint" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered" role="document">
-                <div className="modal-content">
-                    <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLongTitle">Hint for {name}</h5>
-                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLongTitle">Hint #{hintIndex + 1} for {name}</h5>
+                            <button type="button" onClick={e => setIndex(0)} className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">{hint[hintIndex]}</div>
+                        <div className="modal-footer">
+                            <button onClick={e => setIndex(0)} type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button disabled={hintIndex >= hint.length-1 && "disabled"} onClick={e => setIndex(hintIndex + 1)} className="btn btn-primary">Next Hint</button>
+                        </div>
                     </div>
-                    <div className="modal-body">This problem involves Combinatorics</div>
-                    <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button className="btn btn-primary">Next Hint</button>
-                    </div>
-                </div>
                 </div>
             </div>
 
@@ -67,7 +65,7 @@ const Problem = ({ match, auth : { loading } }) => {
             </div>
 
             <div className="problem-statement">
-                {statement && parseInput(statement).map((paragraph) => (
+                {parseInput(statement).map((paragraph) => (
                     <p className="lead">{paragraph}</p>
                 ))}
             </div>
@@ -93,12 +91,5 @@ const Problem = ({ match, auth : { loading } }) => {
     )
 }
 
-Problem.propTypes = {
-    auth: PropTypes.object.isRequired,
-}
 
-const state_prop = state => ({
-    auth: state.auth,
-})
-
-export default connect(state_prop, null)(Problem)
+export default Problem

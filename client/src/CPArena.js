@@ -22,7 +22,7 @@ const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab 
         !loading && (<Router>
             {!authenticated && (<Route path="/login" exact component={Login} />)}
             {authenticated && (<Navbar currentTab={navTab}/>)}
-                (<section className="container">
+                <section className="container">
                     <Switch>
                         <ProtectedComponent path="/" exact component={Profile} />
                         <ProtectedComponent path="/problemset" exact component={Problemset}/>
@@ -33,7 +33,7 @@ const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab 
                         <ProtectedComponent path="/problemset/:id" exact component={Problem} />
                         {/* <Redirect from="*" to="/" /> */}
                     </Switch>
-                </section>)
+                </section>
         </Router>)
     )
 }
