@@ -3,7 +3,7 @@ import CodeEditor from '../utilities/CodeEditor'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { updateTab } from '../../actions/navTab'
-import database from '../../utilities/languageDatabase';
+import { languageDatabase } from '../../utilities/config';
 import axios from 'axios';
 import { SNIPPET_TAB } from '../../utilities/config'
 
@@ -73,7 +73,7 @@ const Snippet = ({ auth : { user : {snippet} }, updateTab }) => {
                         <tr key={idx}>
                             <th scope="row">{idx+1}</th>
                             <td><a href="!#">{snippet.name}</a></td>
-                            <td className={snippet.language}><strong>{database[snippet.language]}</strong></td>
+                            <td className={snippet.language}><strong>{languageDatabase[snippet.language]}</strong></td>
                             <td>{snippet.description}</td>
                             <td><button className="btn btn-light" type="button"><h4 className="delete-button">&times;</h4></button></td>
                         </tr>
