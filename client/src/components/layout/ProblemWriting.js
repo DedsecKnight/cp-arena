@@ -75,4 +75,4 @@ ProblemWriting.propTypes = {
     updateTab: PropTypes.func.isRequired,
 }
 
-export default connect(null, { ProblemWriting })(ProblemWriting)
+export default connect(null, { updateTab })(ProblemWriting)
