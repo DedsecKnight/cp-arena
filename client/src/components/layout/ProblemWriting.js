@@ -2,10 +2,11 @@ import React, { Fragment, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { updateTab } from '../../actions/navTab'
+import { PROBLEM_WRITING_TAB } from '../../utilities/config'
 
 const ProblemWriting = ({ updateTab }) => {
     useEffect(() => {
-        updateTab(4);
+        updateTab(PROBLEM_WRITING_TAB);
     }, [updateTab]);
     return (
         <Fragment>

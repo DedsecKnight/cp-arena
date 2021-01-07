@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { updateTab } from '../../actions/navTab';
 import { connect } from 'react-redux';
+import { PROBLEM_TAB } from '../../utilities/config';
 
 const Problem = ({ match, updateTab }) => {
     const [hintIndex, setIndex] = useState(0);
@@ -22,7 +23,7 @@ const Problem = ({ match, updateTab }) => {
 
     useEffect(() => {
         fetchProblem(match.params.id);
-        updateTab(2);
+        updateTab(PROBLEM_TAB);
     }, [updateTab, match.params.id]);
     
     const { 

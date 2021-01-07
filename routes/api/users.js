@@ -100,6 +100,31 @@ router.get('/me', auth, async (req, res) => {
     }
 });
 
+// @route   POST /api/users/snippets
+// @desc    Add snippet to user database
+// @access  Private
+router.post('/snippets', [ auth, [
+    check('name', 'Name is required').not().isEmpty(),
+    check('code', 'Code is required').not().isEmpty()
+] ], async (req, res) => {
+    const errors = validationResult(req).array();
+    if (errors.length > 0) return res.status(400).json({ errors: errors });
+
+    try {
+        const me = await User.findOne({ _id: req.user.id }).select('-password');
+        const { name, code, language } = req.body;
+        const newSnippet = { name, code, language };
+        if (req.body.description) newSnippet.description = req.body.description;
+        me.snippet.push(newSnippet);
+        await me.save();
+        res.json(me);
+    } 
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");
+    }
+});
+
 
 
 

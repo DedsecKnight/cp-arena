@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types'
 import Moment from 'react-moment';
 import { updateTab } from '../../actions/navTab';
+import { HOME_TAB } from '../../utilities/config';
 
 const Profile = ({ auth : { user }, submission, updateTab }) => {
     const { name, handle, description } = user;
     const { submissions, currMaxAC, currMaxSubmit, solvedProblems } = submission;
     
     useEffect(() => {
-        updateTab(1);
+        updateTab(HOME_TAB);
     })
 
     return (

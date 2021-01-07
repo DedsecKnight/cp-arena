@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { updateTab } from '../../actions/navTab';
+import { PROBLEM_TAB } from '../../utilities/config';
 
 const Problemset = ({ updateTab }) => {
     var [problemSet, initializeProblemset] = useState([]);
@@ -14,7 +15,7 @@ const Problemset = ({ updateTab }) => {
     
     useEffect(() => {
         getProblemSet();
-        updateTab(2);
+        updateTab(PROBLEM_TAB);
     }, [updateTab]);
 
     return (

@@ -160,7 +160,7 @@ strong {
   text-align: center;
 }
 
-.cpp {
+.text\/x-c\+\+src {
   color: #007bff;
 }
 
@@ -168,11 +168,11 @@ strong {
   color: #0a0;
 }
 
-.normal, .python {
+.normal, .text\/x-python {
   color: #f0ad4e;
 }
 
-.wa, .hard, .java {
+.wa, .hard, .text\/x-java {
   color: red;
 }
 
