@@ -6,7 +6,7 @@ import { updateTab } from '../../actions/navTab'
 const ProblemWriting = ({ updateTab }) => {
     useEffect(() => {
         updateTab(4);
-    }, []);
+    }, [updateTab]);
     return (
         <Fragment>
             <h2 className="my-3">Propose a problem here</h2>

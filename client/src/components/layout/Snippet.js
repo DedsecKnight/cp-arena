@@ -7,7 +7,7 @@ import { updateTab } from '../../actions/navTab'
 const Snippet = ({ updateTab }) => {
     useEffect(() => {
         updateTab(3);
-    }, []);
+    }, [updateTab]);
 
     const [code, setCode] = useState("");
     const [name, changeName] = useState("");

@@ -17,7 +17,7 @@ import Problem from './components/layout/Problem';
 const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab }) => {
     useEffect(() => {
         updateUser(token);
-    }, []);
+    }, [updateUser, token]);
     return (
         !loading && (<Router>
             {!authenticated && (

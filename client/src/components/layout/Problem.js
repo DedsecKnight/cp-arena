@@ -23,7 +23,7 @@ const Problem = ({ match, updateTab }) => {
     useEffect(() => {
         fetchProblem(match.params.id);
         updateTab(2);
-    }, []);
+    }, [updateTab, match.params.id]);
     
     const { 
         hint, 
@@ -69,8 +69,8 @@ const Problem = ({ match, updateTab }) => {
             </div>
 
             <div className="problem-statement">
-                {parseInput(statement).map((paragraph) => (
-                    <p className="lead">{paragraph}</p>
+                {parseInput(statement).map((paragraph, idx) => (
+                    <p key={idx} className="lead">{paragraph}</p>
                 ))}
             </div>
 
@@ -82,8 +82,8 @@ const Problem = ({ match, updateTab }) => {
                 <h2 className="title">Output</h2>
                 <p className="lead">{outputSpecification}</p>
             </div>
-            {sampleTestCases.map(testcase => (
-                <div className="my-5">
+            {sampleTestCases.map((testcase, idx) => (
+                <div key={idx} className="my-5">
                     <h4>Sample Input 1</h4>
                     <p className="lead">{testcase.input}</p>
                     <h4>Sample Output 1</h4>

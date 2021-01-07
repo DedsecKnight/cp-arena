@@ -15,7 +15,7 @@ const Problemset = ({ updateTab }) => {
     useEffect(() => {
         getProblemSet();
         updateTab(2);
-    }, []);
+    }, [updateTab]);
 
     return (
         <Fragment>
