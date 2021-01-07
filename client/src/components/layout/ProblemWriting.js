@@ -1,7 +1,12 @@
-import React, { Fragment } from 'react'
-// import PropTypes from 'prop-types'
+import React, { Fragment, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { updateTab } from '../../actions/navTab'
 
-const ProblemWriting = () => {
+const ProblemWriting = ({ updateTab }) => {
+    useEffect(() => {
+        updateTab(4);
+    }, []);
     return (
         <Fragment>
             <h2 className="my-3">Propose a problem here</h2>
@@ -66,8 +71,8 @@ const ProblemWriting = () => {
     )
 }
 
-// ProblemWriting.propTypes = {
+ProblemWriting.propTypes = {
+    updateTab: PropTypes.func.isRequired,
+}
 
-// }
-
-export default ProblemWriting
+export default connect(null, { ProblemWriting })(ProblemWriting)

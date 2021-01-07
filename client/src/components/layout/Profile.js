@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types'
 import Moment from 'react-moment';
+import { updateTab } from '../../actions/navTab';
 
-const Profile = ({ auth : { user }, submission }) => {
+const Profile = ({ auth : { user }, submission, updateTab }) => {
     const { name, handle, description } = user;
     const { submissions, currMaxAC, currMaxSubmit, solvedProblems } = submission;
     
+    useEffect(() => {
+        updateTab(1);
+    })
+
     return (
             <div className="user-profile">
                 <div className="user-top">
@@ -62,12 +67,13 @@ const Profile = ({ auth : { user }, submission }) => {
 
 Profile.propTypes = {
     auth: PropTypes.object.isRequired,
-    submission: PropTypes.object.isRequired
+    submission: PropTypes.object.isRequired,
+    updateTab: PropTypes.func.isRequired,
 }
 
 const state_prop = state => ({
     auth: state.auth,
-    submission: state.submission
+    submission: state.submission,
 })
 
-export default connect(state_prop, null)(Profile)
+export default connect(state_prop, { updateTab })(Profile)

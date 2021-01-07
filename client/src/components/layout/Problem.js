@@ -1,8 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react'
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { updateTab } from '../../actions/navTab';
+import { connect } from 'react-redux';
 
-const Problem = ({ match }) => {
+const Problem = ({ match, updateTab }) => {
     const [hintIndex, setIndex] = useState(0);
     const [initialized, setInitialized] = useState(false);
     const [problem, initializeProblem] = useState({});
@@ -19,6 +22,7 @@ const Problem = ({ match }) => {
 
     useEffect(() => {
         fetchProblem(match.params.id);
+        updateTab(2);
     }, []);
     
     const { 
@@ -91,5 +95,8 @@ const Problem = ({ match }) => {
     )
 }
 
+Problem.propTypes = {
+    updateTab: PropTypes.func.isRequired
+}
 
-export default Problem
+export default connect(null, { updateTab })(Problem);

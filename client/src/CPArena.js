@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Fragment } from 'react'
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types'
 import Login from './components/layout/Login';
@@ -9,7 +9,7 @@ import Profile from './components/layout/Profile';
 import Problemset from './components/layout/Problemset';
 
 import Navbar from './components/layout/Navbar';
-import ProtectedComponent from './components/utilities/ProtectedComponent';
+import ProtectedRoute from './components/utilities/ProtectedRoute';
 import Snippet from './components/layout/Snippet';
 import ProblemWriting from './components/layout/ProblemWriting';
 import Problem from './components/layout/Problem';
@@ -20,18 +20,23 @@ const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab 
     }, []);
     return (
         !loading && (<Router>
-            {!authenticated && (<Route path="/login" exact component={Login} />)}
+            {!authenticated && (
+                <Fragment>
+                    <Route path="/login" exact component={Login} />
+                    <Redirect from="*" to="/login" />
+                </Fragment>
+            )}
             {authenticated && (<Navbar currentTab={navTab}/>)}
                 <section className="container">
                     <Switch>
-                        <ProtectedComponent path="/" exact component={Profile} />
-                        <ProtectedComponent path="/problemset" exact component={Problemset}/>
+                        <ProtectedRoute path="/" exact component={Profile} />
+                        <ProtectedRoute path="/problemset" exact component={Problemset}/>
                         
-                        <ProtectedComponent path="/snippet" exact component={Snippet}/>
+                        <ProtectedRoute path="/snippet" exact component={Snippet}/>
                         
-                        <ProtectedComponent path="/problemwriting" exact component={ProblemWriting}/>  
-                        <ProtectedComponent path="/problemset/:id" exact component={Problem} />
-                        {/* <Redirect from="*" to="/" /> */}
+                        <ProtectedRoute path="/problemwriting" exact component={ProblemWriting}/>  
+                        <ProtectedRoute path="/problemset/:id" exact component={Problem} />
+                        {authenticated && <Redirect from="*" to="/404" /> }
                     </Switch>
                 </section>
         </Router>)

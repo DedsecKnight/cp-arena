@@ -1,8 +1,14 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import CodeEditor from '../utilities/CodeEditor'
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { updateTab } from '../../actions/navTab'
 
-const Snippet = () => {
+const Snippet = ({ updateTab }) => {
+    useEffect(() => {
+        updateTab(3);
+    }, []);
+
     const [code, setCode] = useState("");
     const [name, changeName] = useState("");
     const [language, setLanguage] = useState("");
@@ -92,8 +98,8 @@ const Snippet = () => {
     )
 }
 
-// Snippet.propTypes = {
+Snippet.propTypes = {
+    updateTab: PropTypes.func.isRequired
+}
 
-// }
-
-export default Snippet
+export default connect(null, { updateTab })(Snippet)

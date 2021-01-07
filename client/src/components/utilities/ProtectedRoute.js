@@ -3,7 +3,7 @@ import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types'
 
-const ProtectedComponent = ({ component: Component, auth: { authenticated, loading }, ...rest }) => {
+const ProtectedRoute = ({ component: Component, auth: { authenticated, loading }, ...rest }) => {
     return (
         <Route {...rest} render={props => (!authenticated && !loading ) ? (<Redirect to="/login" />) : (
             <Component {...props} />
@@ -11,7 +11,7 @@ const ProtectedComponent = ({ component: Component, auth: { authenticated, loadi
     );
 }
 
-ProtectedComponent.propTypes = {
+ProtectedRoute.propTypes = {
     auth: PropTypes.object.isRequired,
 }
 
@@ -19,4 +19,4 @@ const state_props = state => ({
     auth: state.auth 
 });
 
-export default connect(state_props, null)(ProtectedComponent);
+export default connect(state_props, null)(ProtectedRoute);

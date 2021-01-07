@@ -1,8 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import axios from 'axios';
+import { updateTab } from '../../actions/navTab';
 
-const Problemset = () => {
+const Problemset = ({ updateTab }) => {
     var [problemSet, initializeProblemset] = useState([]);
     const getProblemSet = async() => {
         const res = await axios.get('http://localhost:5000/api/problems');
@@ -11,6 +14,7 @@ const Problemset = () => {
     
     useEffect(() => {
         getProblemSet();
+        updateTab(2);
     }, []);
 
     return (
@@ -44,4 +48,8 @@ const Problemset = () => {
     )
 }
 
-export default Problemset;
+Problemset.propTypes = {
+    updateTab: PropTypes.func.isRequired
+}
+
+export default connect(null, { updateTab })(Problemset);
