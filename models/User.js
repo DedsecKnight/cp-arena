@@ -27,7 +27,7 @@ const User = new mongoose.Schema({
             type: String, 
             required: true,
         },
-        content: {
+        code: {
             type: String, 
         },
         description: {

@@ -6,10 +6,15 @@ import { updateTab } from '../../actions/navTab'
 import { languageDatabase } from '../../utilities/config';
 import axios from 'axios';
 import { SNIPPET_TAB } from '../../utilities/config'
+import CodeDisplay from '../utilities/CodeDisplay'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const Snippet = ({ auth : { user : {snippet} }, updateTab }) => {
     useEffect(() => {
         updateTab(SNIPPET_TAB);
+
+        // Enable popover JS
+        window.$('[data-toggle="popover"]').popover();
     }, [updateTab]);
 
     const [snippets, updateSnippet] = useState(snippet); 
@@ -72,14 +77,42 @@ const Snippet = ({ auth : { user : {snippet} }, updateTab }) => {
                     {snippets.map((snippet, idx)=>(
                         <tr key={idx}>
                             <th scope="row">{idx+1}</th>
-                            <td><a href="!#">{snippet.name}</a></td>
+                            <td><a href="!#" data-toggle="modal" data-target={`#snippet${idx}`}>{snippet.name}</a></td>
                             <td className={snippet.language}><strong>{languageDatabase[snippet.language]}</strong></td>
                             <td>{snippet.description}</td>
                             <td><button className="btn btn-light" type="button"><h4 className="delete-button">&times;</h4></button></td>
                         </tr>
+                        
                     ))}
                 </tbody>
             </table>
+            
+            {snippets.map((snippet, idx)=>(
+                <div key={idx} className="modal fade" id={`snippet${idx}`} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-lg" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">{snippet.name}</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <CodeDisplay code={snippet.code} language={snippet.language} />
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <CopyToClipboard text={snippet.code}>
+                                    <button type="button" className="btn btn-primary" data-container="body" data-trigger="focus" data-toggle="popover" data-placement="top" data-content="Copied to clipboard">
+                                        Copy to clipboard
+                                    </button>
+                                </CopyToClipboard> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+
             <div className="my-5 add-snippet">
                 <h2 className="my-4">Create your Snippet below</h2>
                 <form onSubmit={e => submit(e)}>
