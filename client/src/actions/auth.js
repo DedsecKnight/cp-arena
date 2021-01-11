@@ -9,7 +9,7 @@ export const updateUser = (token) => async dispatch => {
     setAuthToken(token);
     try {
         const res = await axios.get('http://localhost:5000/api/users/me');
-        await dispatch(getSubmission());
+        // await dispatch(getSubmission());
         dispatch({ type: UPDATE_USER, payload: res.data });   
     } 
     catch (error) {

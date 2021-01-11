@@ -41,20 +41,23 @@ router.post('/', auth, async (req, res) => {
     submission.name = filename + "." + filetype;
     try {
         await submission.mv('submissions/' + submission.name);
-        let input = await Problem.findOne({ _id: problem }).select('testcases');
-        const user_output = exec_code(input.testcases.map(inp => inp.input), filename, filetype);
-        const judge_output = input.testcases.map((inp) => inp.output);
+        let currProblem = await Problem.findOne({ _id: problem });
+        const user_output = exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype);
+        const judge_output = currProblem.testcases.map((inp) => inp.output);
         
         let verdict = -1;
 
         for (var i = 0; i < judge_output.length; i++) {
-            if (user_output[i] !== judge_output[i]) {
+            if (user_output[i].trim() !== judge_output[i]) {
                 verdict = i;
                 break;
             }
         }
 
         verdict = (verdict === -1 ? "Accepted" : `WA on test ${verdict + 1}`);
+        currProblem.submissionCount++;
+        if (verdict === "Accepted") currProblem.acceptedCount++;
+
         const file = submission.data.toString('utf-8');
 
         let submission_obj = new Submission({
@@ -71,6 +74,7 @@ router.post('/', auth, async (req, res) => {
 
         await user.save();
         await submission_obj.save();
+        await currProblem.save();
 
         res.json({ verdict });
     } 

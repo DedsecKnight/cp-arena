@@ -7,14 +7,6 @@ import { connect } from 'react-redux';
 import { PROBLEM_TAB } from '../../utilities/config';
 
 const Problem = ({ match, updateTab }) => {
-    const [hintIndex, setIndex] = useState(0);
-    const [initialized, setInitialized] = useState(false);
-    const [problem, initializeProblem] = useState({});
-
-    const parseInput = (input) => {
-        return input.split('\n');
-    }
-
     const fetchProblem = async (id) => {
         const res = await axios.get(`http://localhost:5000/api/problems/${id}`);
         initializeProblem(res.data); 
@@ -25,6 +17,14 @@ const Problem = ({ match, updateTab }) => {
         fetchProblem(match.params.id);
         updateTab(PROBLEM_TAB);
     }, [updateTab, match.params.id]);
+
+    const [hintIndex, setIndex] = useState(0);
+    const [initialized, setInitialized] = useState(false);
+    const [problem, initializeProblem] = useState({});
+
+    const parseInput = (input) => {
+        return input.split('\n');
+    }
     
     const { 
         hint, 
@@ -42,7 +42,7 @@ const Problem = ({ match, updateTab }) => {
             <div className="problem-action">
                 <Link className="btn problem-btn btn-light" to="/problemset">Go back to Problemset</Link>
                 <button className="btn btn-info problem-btn" disabled={hint.length === 0 && ("disabled")} data-toggle="modal" data-target="#problemHint">Get Hint</button>
-                <button className="btn btn-primary problem-btn">Submit Solution</button>
+                <Link to={`/problemset/${match.params.id}/submit`} className="btn btn-primary problem-btn">Submit Solution</Link>
             </div>
             
             <div className="modal fade" id="problemHint" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

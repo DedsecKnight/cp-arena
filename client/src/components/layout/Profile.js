@@ -4,14 +4,16 @@ import PropTypes from 'prop-types'
 import Moment from 'react-moment';
 import { updateTab } from '../../actions/navTab';
 import { HOME_TAB } from '../../utilities/config';
+import { getSubmission } from '../../actions/submission';
 
-const Profile = ({ auth : { user }, submission, updateTab }) => {
+const Profile = ({ auth : { user }, submission, updateTab, getSubmission }) => {
     const { name, handle, description } = user;
     const { submissions, currMaxAC, currMaxSubmit, solvedProblems } = submission;
     
     useEffect(() => {
         updateTab(HOME_TAB);
-    })
+        getSubmission();
+    }, []);
 
     return (
             <div className="user-profile">
@@ -37,7 +39,7 @@ const Profile = ({ auth : { user }, submission, updateTab }) => {
                     </div>
                 </div>
                 <div className="user-bottom">
-                    <h3>Here are the problems that you're recently working on </h3>
+                    <h3>Most recent submissions </h3>
                     <table className="table">
                         <thead>
                         <tr>
@@ -70,6 +72,7 @@ Profile.propTypes = {
     auth: PropTypes.object.isRequired,
     submission: PropTypes.object.isRequired,
     updateTab: PropTypes.func.isRequired,
+    getSubmission: PropTypes.func.isRequired,
 }
 
 const state_prop = state => ({
@@ -77,4 +80,4 @@ const state_prop = state => ({
     submission: state.submission,
 })
 
-export default connect(state_prop, { updateTab })(Profile)
+export default connect(state_prop, { updateTab, getSubmission })(Profile)
