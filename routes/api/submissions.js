@@ -68,7 +68,7 @@ router.post('/', auth, async (req, res) => {
         let verdict = -1;
 
         for (var i = 0; i < judge_output.length; i++) {
-            if (user_output[i].trim() !== judge_output[i]) {
+            if (user_output[i].trim() !== judge_output[i].trim()) {
                 verdict = i;
                 break;
             }
