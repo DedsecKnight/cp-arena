@@ -14,6 +14,7 @@ import Snippet from './components/layout/Snippet';
 import ProblemWriting from './components/layout/ProblemWriting';
 import Problem from './components/layout/Problem';
 import SubmitSolution from './components/layout/SubmitSolution';
+import Alert from './components/utilities/Alert';
 
 const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab }) => {
     useEffect(() => {
@@ -29,6 +30,7 @@ const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab 
             )}
             {authenticated && (<Navbar currentTab={navTab}/>)}
                 <section className="container">
+                    <Alert />
                     <Switch>
                         <ProtectedRoute path="/" exact component={Profile} />
                         <ProtectedRoute path="/problemset" exact component={Problemset}/>

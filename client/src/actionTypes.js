@@ -11,3 +11,6 @@ export const RESET_SUBMISSION = "RESET_SUBMISSION";
 
 export const UPDATE_TAB = "UPDATE_TAB";
 export const RESET_TAB = "RESET_TAB";
+
+export const ADD_ALERT = "ADD_ALERT";
+export const REMOVE_ALERT = "REMOVE_ALERT";

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, Fragment } from 'react'
+import { connect } from 'react-redux'
 import axios from 'axios'
 import { Link } from 'react-router-dom';
 import { fileExtension } from '../../utilities/config';
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 import CodeEditor from '../utilities/CodeEditor';
+import { addAlert } from '../../actions/alert';
 
-const SubmitSolution = ({ match }) => {
+const SubmitSolution = ({ match, addAlert }) => {
     const [problemName, setName] = useState("");
 
     const getProblemName = async (id) => {
@@ -44,9 +46,10 @@ const SubmitSolution = ({ match }) => {
     const submit = async (e) => {
         e.preventDefault();
         if (code && file) {
-            console.log("Multiple solution detected");
+            addAlert("Multiple solution detected", "danger");
             return;
         }
+        addAlert("Submission received! Please wait for judge", "secondary");
         try {
             if (file) {
                 let formData = new FormData();
@@ -54,13 +57,13 @@ const SubmitSolution = ({ match }) => {
                 formData.append('problem', match.params.id);
                 const config = { headers: { "Content-Type" : "multipart/form-data" } };
                 const res = await axios.post('http://localhost:5000/api/submissions', formData, config);    
-                console.log(res.data);
+                addAlert(res.data.verdict, res.data.verdict === "Accepted" ? "success" : "danger");
             }
             else {
                 const config = { headers: { "Content-Type": "application/json" } };
                 const body = { code, language: fileExtension[options.mode], problem: match.params.id };
                 const res = await axios.post('http://localhost:5000/api/submissions', body, config);
-                console.log(res.data);
+                addAlert(res.data.verdict, res.data.verdict === "Accepted" ? "success" : "danger");
             }
         } 
         catch (error) {
@@ -95,8 +98,8 @@ const SubmitSolution = ({ match }) => {
     )
 }
 
-// SubmitSolution.propTypes = {
+SubmitSolution.propTypes = {
+    addAlert: PropTypes.func.isRequired
+}
 
-// }
-
-export default SubmitSolution
+export default connect(null, { addAlert })(SubmitSolution)

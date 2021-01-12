@@ -85,10 +85,14 @@ const Problem = ({ match, updateTab }) => {
             </div>
             {sampleTestCases.map((testcase, idx) => (
                 <div key={idx} className="my-5">
-                    <h4>Sample Input 1</h4>
-                    <p className="lead">{testcase.input}</p>
-                    <h4>Sample Output 1</h4>
-                    <p className="lead">{testcase.output}</p>
+                    <h4>Sample Input {idx+1}</h4>
+                    {parseInput(testcase.input).map((input, idx)=> (
+                        <p key={idx} className="lead">{input}</p>
+                    ))}
+                    <h4>Sample Output {idx+1}</h4>
+                    {parseInput(testcase.output).map((output, idx)=> (
+                        <p key={idx} className="lead">{output}</p>
+                    ))}    
                 </div>
             ))}
             

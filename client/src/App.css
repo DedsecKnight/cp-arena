@@ -214,6 +214,11 @@ strong {
   border-top: 2px dotted #ccc;
 }
 
+.card {
+  justify-content: space-around;
+  max-height: 50px;
+}
+
 @media (max-width: 700px) {
   .container {
     padding: 2rem;
