@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom';
+import { fileExtension } from '../../utilities/config';
 // import PropTypes from 'prop-types'
 import CodeEditor from '../utilities/CodeEditor';
 
@@ -21,7 +22,7 @@ const SubmitSolution = ({ match }) => {
         getProblemName(match.params.id);
     })
 
-    //const [code, setCode] = useState("");
+    const [code, setCode] = useState("");
     const [file, setFile] = useState("");
     const [options, setOptions] = useState({
         mode: '',
@@ -42,13 +43,25 @@ const SubmitSolution = ({ match }) => {
 
     const submit = async (e) => {
         e.preventDefault();
-        let formData = new FormData();
-        formData.append('submission', file);
-        formData.append('problem', match.params.id);
+        if (code && file) {
+            console.log("Multiple solution detected");
+            return;
+        }
         try {
-            const config = { headers: { "Content-Type" : "multipart/form-data" } };
-            const res = await axios.post('http://localhost:5000/api/submissions', formData, config);    
-            console.log(res.data);
+            if (file) {
+                let formData = new FormData();
+                formData.append('submission', file);
+                formData.append('problem', match.params.id);
+                const config = { headers: { "Content-Type" : "multipart/form-data" } };
+                const res = await axios.post('http://localhost:5000/api/submissions', formData, config);    
+                console.log(res.data);
+            }
+            else {
+                const config = { headers: { "Content-Type": "application/json" } };
+                const body = { code, language: fileExtension[options.mode], problem: match.params.id };
+                const res = await axios.post('http://localhost:5000/api/submissions', body, config);
+                console.log(res.data);
+            }
         } 
         catch (error) {
             console.log(error.response);
@@ -68,11 +81,11 @@ const SubmitSolution = ({ match }) => {
                     </select>
                 </div>
                 <div className="form-group">
-                    <input name="submission" type="file" className="form-control-file" onChange={e => setFile(e.target.files[0])}/>
+                    <input disabled={code !== "" && "disabled"} name="submission" type="file" className="form-control-file" onChange={e => setFile(e.target.files[0])}/>
                 </div> 
-                {/* <div className="form-group">
+                <div className="form-group">
                     <CodeEditor onChange={setCode} value={code} options={options} />
-                </div> */}
+                </div>
                 <div className="form-group problem-action">
                     <button className="btn btn-primary problem-btn" type="submit">Submit Solution</button>
                     <Link className="btn btn-light problem-btn" to={`/problemset/${match.params.id}`}>Back to Problem Description</Link>

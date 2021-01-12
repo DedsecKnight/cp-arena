@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const upload = require('express-fileupload');
 const router = express.Router();
 const exec_code = require('../../code_execution/code_exec');
@@ -35,12 +36,31 @@ router.get('/me', auth, async (req, res) => {
 // @desc    Upload submission
 // @access  Private
 router.post('/', auth, async (req, res) => {
-    if (!req.files || !req.files.submission || !req.body.problem || !req.user) return res.status(400).json({ errors: [{msg: "Invalid request"}]});
-    const { user : { id }, body : { problem }, files: { submission }} = req;
-    const filename = id + "_" + problem, filetype = submission.name.substring(submission.name.indexOf(".")+1, submission.name.length);
-    submission.name = filename + "." + filetype;
+    if (!req.body.problem || !req.user) return res.status(400).json({ errors: [{msg: "Invalid request"}]});
+    
+    const submission_file = req.files && req.files.submission;
+    const submission_code = req.body.code;
+
+    if (!submission_code && !submission_file) return res.status(400).json({ errors: [{msg: "No submission found"}]});
+    if (submission_code && submission_file) return res.status(400).json({ errors : [{ msg: "Multiple solutions found" }]});
+
+    if (submission_code && !req.body.language) return res.status(400).json({ errors: [{ msg: "Please specify programming language" }] });
+
+    const { user : { id }, body : { problem } } = req;
+    const filename = id + "_" + problem;
+    let filetype = "";
+
     try {
-        await submission.mv('submissions/' + submission.name);
+        if (submission_file) {
+            const { files: { submission } } = req;
+            filetype = submission.name.substring(submission.name.indexOf(".")+1, submission.name.length);
+            submission.name = filename + "." + filetype;
+            await submission.mv('submissions/' + submission.name);
+        }
+        else {
+            filetype = req.body.language;
+            fs.writeFileSync('submissions/' + filename + "." + filetype, req.body.code);
+        }
         let currProblem = await Problem.findOne({ _id: problem });
         const user_output = exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype);
         const judge_output = currProblem.testcases.map((inp) => inp.output);
@@ -58,7 +78,7 @@ router.post('/', auth, async (req, res) => {
         currProblem.submissionCount++;
         if (verdict === "Accepted") currProblem.acceptedCount++;
 
-        const file = submission.data.toString('utf-8');
+        const file = (submission_file ? req.files.submission.data.toString('utf-8') : req.body.code);
 
         let submission_obj = new Submission({
             name: problem, 

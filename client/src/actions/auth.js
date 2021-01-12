@@ -1,6 +1,6 @@
 import { USER_LOGIN, USER_LOGOUT, LOGIN_FAILED, UPDATE_USER } from '../actionTypes';
 import { setAuthToken } from '../utilities/setToken';
-import { clearSubmission, getSubmission } from './submission';
+import { clearSubmission } from './submission';
 
 import axios from 'axios';
 
@@ -9,7 +9,6 @@ export const updateUser = (token) => async dispatch => {
     setAuthToken(token);
     try {
         const res = await axios.get('http://localhost:5000/api/users/me');
-        // await dispatch(getSubmission());
         dispatch({ type: UPDATE_USER, payload: res.data });   
     } 
     catch (error) {

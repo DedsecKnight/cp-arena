@@ -8,3 +8,9 @@ export const languageDatabase = {
     "text/x-c++src": "C++",
     "text/x-python": "Python"
 };
+
+export const fileExtension = {
+    "text/x-java": "java",
+    "text/x-c++src": "cpp",
+    "text/x-python": "py"
+};
