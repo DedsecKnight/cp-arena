@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 const Alert = ({ alert }) => 
     alert !== null && alert.length > 0 && alert.map((a) => (
-        <div key={a.id} className={`card text-white bg-${a.type} p-3 mb-3`}>
+        <div key={a.id} className={`card text-white bg-${a.type} p-3 m-3 sticky-top`}>
             <h6>{a.msg}</h6>
         </div>
     ));

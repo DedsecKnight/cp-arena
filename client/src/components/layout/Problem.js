@@ -5,6 +5,7 @@ import axios from 'axios'
 import { updateTab } from '../../actions/navTab';
 import { connect } from 'react-redux';
 import { PROBLEM_TAB } from '../../utilities/config';
+import { parseInput } from '../../utilities/config';
 
 const Problem = ({ match, updateTab }) => {
     const fetchProblem = async (id) => {
@@ -21,10 +22,6 @@ const Problem = ({ match, updateTab }) => {
     const [hintIndex, setIndex] = useState(0);
     const [initialized, setInitialized] = useState(false);
     const [problem, initializeProblem] = useState({});
-
-    const parseInput = (input) => {
-        return input.split('\n');
-    }
     
     const { 
         hint, 
@@ -92,7 +89,15 @@ const Problem = ({ match, updateTab }) => {
                     <h4>Sample Output {idx+1}</h4>
                     {parseInput(testcase.output).map((output, idx)=> (
                         <p key={idx} className="lead">{output}</p>
-                    ))}    
+                    ))} 
+                    {testcase.explanation && (
+                        <Fragment>
+                            <h4>Explanation for Sample Data {idx + 1}</h4>   
+                            {parseInput(testcase.explanation).map((output, idx)=>(
+                                <p key={idx} className="lead">{output}</p>
+                            ))}
+                        </Fragment>
+                    )}
                 </div>
             ))}
             

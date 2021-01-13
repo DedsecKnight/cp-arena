@@ -14,3 +14,7 @@ export const fileExtension = {
     "text/x-c++src": "cpp",
     "text/x-python": "py"
 };
+
+export const parseInput = (input) => {
+    return input.split('\n');
+}

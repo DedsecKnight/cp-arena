@@ -23,7 +23,7 @@ router.post('/',  [
     check('name', 'Problem name is required').not().isEmpty(),
     check('difficulty', 'Problem difficulty is required').not().isEmpty(),
     body('difficulty').custom(val => {
-        if (val !== "easy" && val !== "medium" && val !== "hard") throw new Error('Invalid difficulty');
+        if (val !== "easy" && val !== "normal" && val !== "hard") throw new Error('Invalid difficulty');
         return true;
     }),
     check('statement', 'Problem statement is required').not().isEmpty(),
