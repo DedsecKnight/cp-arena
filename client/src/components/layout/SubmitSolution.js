@@ -67,7 +67,8 @@ const SubmitSolution = ({ match, addAlert }) => {
             }
         } 
         catch (error) {
-            console.log(error.response);
+            error.response.data.errors.forEach(error => addAlert(error.msg, "danger"));
+            //console.log(error.response);
         }
     }
 
