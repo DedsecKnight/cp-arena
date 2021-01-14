@@ -9,10 +9,10 @@ import { SNIPPET_TAB } from '../../utilities/config'
 import CodeDisplay from '../utilities/CodeDisplay'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { addAlert } from '../../actions/alert';
-import { addSnippet } from '../../actions/auth';
+import { addSnippet, removeSnippet } from '../../actions/auth';
 import { v4 as uuid } from 'uuid';
 
-const Snippet = ({ auth : { user : {snippet} }, updateTab, addAlert, addSnippet }) => {
+const Snippet = ({ auth : { user : {snippet} }, updateTab, addAlert, addSnippet, removeSnippet }) => {
     useEffect(() => {
         updateTab(SNIPPET_TAB);
 
@@ -48,6 +48,24 @@ const Snippet = ({ auth : { user : {snippet} }, updateTab, addAlert, addSnippet 
         changeName("");
         setLanguage("");
         setOption({...editorOption, mode: ''});
+    }
+    
+    const deleteSnippet = async (idx) => {
+        let snippet_list = snippets;
+        const id = snippet_list[idx]._id;
+        // Update API
+        try {
+            await axios.delete(`http://localhost:5000/api/users/snippets/${id}`);    
+        } 
+        catch (error) {
+            console.error(error.response);
+        }
+        // Update state
+        snippet_list.splice(idx, 1);
+        updateSnippet(snippet_list);
+        
+        // Update Redux Store
+        removeSnippet(id);
     }
 
     const submit = async (e) => {
@@ -96,8 +114,8 @@ const Snippet = ({ auth : { user : {snippet} }, updateTab, addAlert, addSnippet 
                             <th scope="row">{idx+1}</th>
                             <td><a href="!#" data-toggle="modal" data-target={`#snippet${idx}`}>{snippet.name}</a></td>
                             <td className={snippet.language}><strong>{languageDatabase[snippet.language]}</strong></td>
-                            <td>{snippet.description}</td>
-                            <td><button className="btn btn-light" type="button"><h4 className="delete-button">&times;</h4></button></td>
+                            <td>{snippet.description || "N/A"}</td>
+                            <td><button onClick={e => deleteSnippet(idx)} className="btn btn-light" type="button"><h4 className="delete-button">&times;</h4></button></td>
                         </tr>
                         
                     ))}
@@ -164,11 +182,12 @@ Snippet.propTypes = {
     updateTab: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
     addAlert: PropTypes.func.isRequired,
-    addSnippet: PropTypes.func.isRequired
+    addSnippet: PropTypes.func.isRequired,
+    removeSnippet: PropTypes.func.isRequired
 }
 
 const state_props = state => ({
     auth: state.auth
 })
 
-export default connect(state_props, { updateTab, addAlert, addSnippet })(Snippet)
+export default connect(state_props, { updateTab, addAlert, addSnippet, removeSnippet })(Snippet)

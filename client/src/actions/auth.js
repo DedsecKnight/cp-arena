@@ -1,4 +1,4 @@
-import { USER_LOGIN, USER_LOGOUT, LOGIN_FAILED, UPDATE_USER, ADD_SNIPPET } from '../actionTypes';
+import { USER_LOGIN, USER_LOGOUT, LOGIN_FAILED, UPDATE_USER, ADD_SNIPPET, REMOVE_SNIPPET } from '../actionTypes';
 import { setAuthToken } from '../utilities/setToken';
 import { clearSubmission } from './submission';
 
@@ -37,4 +37,8 @@ export const logoutUser = () => dispatch => {
 
 export const addSnippet = (snippet) => dispatch => {
     dispatch({ type: ADD_SNIPPET, payload: snippet });
+}
+
+export const removeSnippet = (id) => dispatch => {
+    dispatch({ type: REMOVE_SNIPPET, payload: id });
 }

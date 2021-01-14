@@ -1,4 +1,4 @@
-import { USER_LOGIN, USER_LOGOUT, UPDATE_USER, LOGIN_FAILED, ADD_SNIPPET } from '../actionTypes';
+import { USER_LOGIN, USER_LOGOUT, UPDATE_USER, LOGIN_FAILED, ADD_SNIPPET, REMOVE_SNIPPET } from '../actionTypes';
 
 const initialState = {
     authenticated: false,
@@ -21,6 +21,11 @@ const reducer = (state = initialState, action) => {
             return ({
                 ...state,
                 user: { ...state.user, snippet: [...state.user.snippet, payload]}
+            });
+        case REMOVE_SNIPPET: 
+            return ({
+                ...state, 
+                user: { ...state.user, snippet: state.user.snippet.filter(s => s.id !== payload )}
             });
         case USER_LOGIN:
             localStorage.setItem('token', payload.token);

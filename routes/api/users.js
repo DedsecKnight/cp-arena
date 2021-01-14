@@ -125,6 +125,22 @@ router.post('/snippets', [ auth, [
     }
 });
 
+// @route   DELETE /api/users/snippets/:id
+// @desc    Delete snippet with given ID from user database 
+// @access  Private
+router.delete('/snippets/:id', auth, async(req, res)=>{
+    try {
+        const me = await User.findOne({ _id: req.user.id }).select('-password');
+        me.snippet = me.snippet.filter((s) => s._id.toString() !== req.params.id);
+        await me.save();
+        res.json(me);
+    } 
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");
+    }
+});
+
 
 
 
