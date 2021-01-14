@@ -23,8 +23,8 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
         timelimit: '',
         memorylimit: '',
         testcases: [],
-        validatorRequired: false,
-        validatorCode: ""
+        checkerRequired: false,
+        checkerCode: ''
     });
 
     const initialTestCase = {
@@ -86,19 +86,25 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
         name,
         difficulty,
         statement, 
-        validatorRequired, 
+        checkerRequired, 
         inputSpecification,
         outputSpecification,
         testcases, 
         hint,
         timelimit, 
         memorylimit,
+        checkerCode
     } = formData;
 
     const submit = async (e) => {
         e.preventDefault();
         if (testcases.length === 0) {
             addAlert("At least 1 test case is required", "danger");
+            return;
+        }
+
+        if (checkerRequired && !checkerCode) {
+            addAlert("Cannot find checker script", "danger");
             return;
         }
 
@@ -113,7 +119,7 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
             memorylimit,
             testcases: [],
             sampleTestCases: [],
-            validatorRequired,
+            checkerRequired,
         };
 
         // const n = testcases.length;
@@ -127,8 +133,17 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
             let inputReader = new FileReader();
             let outputReader = new FileReader();
             
-            const data = [testcases[i].inputFile, testcases[i].outputFile];
-            const { explanation, isSampleCase } = testcases[i];
+            const { inputFile, outputFile, explanation, isSampleCase } = testcases[i];
+
+            if (!inputFile) {
+                addAlert(`Input data not found for test case ${i+1}`, 'danger');
+                return;
+            }
+            if (!outputFile) {
+                addAlert(`Output data not found for test case ${i+1}`, 'danger');
+                return;
+            }
+
             const currIdx = i;
 
             const read = async (idx) => {
@@ -139,10 +154,10 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
                             await read(idx + 1);    
                         } 
                         catch (error) {
-                            console.error(error);
+                            console.error(error.message);
                         }
                     }
-                    inputReader.readAsText(data[idx]);
+                    inputReader.readAsText(inputFile);
                 }
                 else {
                     outputReader.onload = async (e) => {
@@ -164,16 +179,20 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
                                 history.push('/problemset');
                             } 
                             catch (error) {
-                                console.error(error.response);
+                                error.response.data.errors.forEach(error => addAlert(error.msg, "danger"));
                             }
                         }
                     }
-                    outputReader.readAsText(data[idx]);
+                    outputReader.readAsText(outputFile);
                 }
 
             };
 
-            await read(0);
+            try {
+                await read(0);
+            } catch (error) {
+                console.error(error.message);
+            }
         }
         
     }
@@ -201,24 +220,24 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
             <h2 className="my-3">Propose a problem here</h2>
             <form className="cparena-form" onSubmit={e => submit(e)}>
                 <div className="form-group">
-                    <input value={name} onChange={e => update(e)} type="text" className="form-control" name="name" placeholder="Problem name" />
+                    <input value={name} onChange={e => update(e)} type="text" className="form-control" name="name" placeholder="Problem name" required />
                 </div>
                 <div className="form-group">
-                    <select name="difficulty" className="form-control" value={difficulty} onChange={e => update(e)}>
-                        <option value="">Choose a difficulty</option>
+                    <select name="difficulty" className="form-control" value={difficulty} onChange={e => update(e)} required>
+                        <option value="" disabled>Choose a difficulty</option>
                         <option value="easy">Easy</option>
                         <option value="normal">Normal</option>
                         <option value="hard">Hard</option>
                     </select>
                 </div>
                 <div className="form-group">
-                    <input placeholder="Time limit (seconds)" type="text" pattern="[0-9]+" name="timelimit" value={timelimit} onChange={e => update(e)} className="form-control"/>
+                    <input placeholder="Time limit (seconds)"required type="text" pattern="[0-9]+" name="timelimit" value={timelimit} onChange={e => update(e)} className="form-control"/>
                 </div>
                 <div className="form-group">
-                <input placeholder="Memory limit (MB)" type="text" pattern="[0-9]+" name="memorylimit" value={memorylimit} onChange={e => update(e)} className="form-control"/>
+                <input placeholder="Memory limit (MB)" required type="text" pattern="[0-9]+" name="memorylimit" value={memorylimit} onChange={e => update(e)} className="form-control"/>
                 </div>
                 <div className="form-group">
-                    <textarea name="statement" value={statement} onChange={e => update(e)} cols="30" rows="10" className="form-control" placeholder="Problem Statement"></textarea>
+                    <textarea name="statement" required value={statement} onChange={e => update(e)} cols="30" rows="10" className="form-control" placeholder="Problem Statement"></textarea>
                 </div>
                 <div className="form-group">
                     <textarea name="inputSpecification" value={inputSpecification} onChange={e => update(e)} cols="30" rows="5" className="form-control" placeholder="Input description"></textarea>
@@ -227,9 +246,9 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
                     <textarea name="outputSpecification" value={outputSpecification} onChange={e => update(e)} cols="30" rows="5" className="form-control" placeholder="Output description"></textarea>
                 </div>
                 <div className="form-group">
-                    <p className="lead">Validator required:  <input type="checkbox" name="validatorRequired" checked={validatorRequired} onChange={e => update(e)}/> </p>
-                    <p className="lead">Upload validator script</p>
-                    <input disabled={!validatorRequired && "disabled"} type="file" className="form-control-file" />
+                    <p className="lead">Checker required:  <input type="checkbox" name="checkerRequired" checked={checkerRequired} onChange={e => update(e)}/> </p>
+                    <p className="lead">Upload checker script</p>
+                    <input disabled={!checkerRequired && "disabled"} type="file" className="form-control-file" />
                 </div>
                 { testcases.map((testcase, idx)=> (
                     <div key={idx} className="test-case">

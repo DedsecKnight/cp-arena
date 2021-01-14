@@ -45,14 +45,14 @@ router.post('/',  [
         });
         return true;
     }),
-    body('validatorCode').custom((code, { req }) => {
-        if (!code && req.body.validatorRequired) throw new Error('Validator Code is required');
+    body('checkerCode').custom((code, { req }) => {
+        if (!code && req.body.checkerRequired) throw new Error('Validator Code is required');
         return true;
     })
 ], async (req, res) => {
     const errors = validationResult(req).array();
     if (errors.length > 0) return res.status(400).json({ errors: errors });
-    const { name, difficulty, statement, inputSpecification, outputSpecification, hint, sampleTestCases, validatorRequired, timelimit, memorylimit, testcases } = req.body;
+    const { name, difficulty, statement, inputSpecification, outputSpecification, hint, sampleTestCases, checkerRequired, timelimit, memorylimit, testcases } = req.body;
     try {
         let problem = await Problem.find({ name: req.body.name });
         if (problem.length > 0) return res.status(400).json({ errors: [{ msg : "Problem already exists" }]});
@@ -68,10 +68,10 @@ router.post('/',  [
             memorylimit, 
             testcases,
             sampleTestCases,
-            validatorRequired
+            checkerRequired
         };
 
-        if (validatorRequired) problem.validatorCode = req.body.validatorCode;
+        if (checkerRequired) problem.checkerCode = req.body.checkerCode;
         problem = new Problem(problem);
 
         await problem.save();
