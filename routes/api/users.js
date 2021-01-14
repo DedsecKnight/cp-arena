@@ -112,8 +112,8 @@ router.post('/snippets', [ auth, [
 
     try {
         const me = await User.findOne({ _id: req.user.id }).select('-password');
-        const { name, code, language } = req.body;
-        const newSnippet = { name, code, language };
+        const { id, name, code, language } = req.body;
+        const newSnippet = { id, name, code, language };
         if (req.body.description) newSnippet.description = req.body.description;
         me.snippet.push(newSnippet);
         await me.save();
