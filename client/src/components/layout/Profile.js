@@ -5,6 +5,7 @@ import Moment from 'react-moment';
 import { updateTab } from '../../actions/navTab';
 import { HOME_TAB } from '../../utilities/config';
 import { getSubmission } from '../../actions/submission';
+import { Link } from 'react-router-dom';
 
 const Profile = ({ auth : { user }, submission, updateTab, getSubmission }) => {
     const { name, handle, description } = user;
@@ -55,7 +56,7 @@ const Profile = ({ auth : { user }, submission, updateTab, getSubmission }) => {
                                 <tr key={idx}>
                                     <th scope="row">{idx+1}</th>
                                     <td className="hide-sm"><a href="!#">{submission._id}</a></td>
-                                    <td><a href="!#">{submission.name.name}</a></td>
+                                    <td><Link to={`/problemset/${submission.name._id}`}>{submission.name.name}</Link></td>
                                     <td className="hide-sm"><Moment format="YY/MM/DD -  HH:mm" local>{submission.date}</Moment></td>
                                     <td className={submission.verdict === "Accepted" ? "accepted" : "wa"}>{submission.verdict}</td>
                                 </tr>
