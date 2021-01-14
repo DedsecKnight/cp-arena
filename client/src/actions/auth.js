@@ -1,4 +1,4 @@
-import { USER_LOGIN, USER_LOGOUT, LOGIN_FAILED, UPDATE_USER } from '../actionTypes';
+import { USER_LOGIN, USER_LOGOUT, LOGIN_FAILED, UPDATE_USER, ADD_SNIPPET } from '../actionTypes';
 import { setAuthToken } from '../utilities/setToken';
 import { clearSubmission } from './submission';
 
@@ -33,4 +33,8 @@ export const loginUser = (data) => async dispatch => {
 export const logoutUser = () => dispatch => {
     dispatch({ type: USER_LOGOUT });
     dispatch(clearSubmission());
+}
+
+export const addSnippet = (snippet) => dispatch => {
+    dispatch({ type: ADD_SNIPPET, payload: snippet });
 }
