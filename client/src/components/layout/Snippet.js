@@ -8,8 +8,11 @@ import axios from 'axios';
 import { SNIPPET_TAB } from '../../utilities/config'
 import CodeDisplay from '../utilities/CodeDisplay'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { addAlert } from '../../actions/alert';
+import { addSnippet } from '../../actions/auth';
+import { v4 as uuid } from 'uuid';
 
-const Snippet = ({ auth : { user : {snippet} }, updateTab }) => {
+const Snippet = ({ auth : { user : {snippet} }, updateTab, addAlert, addSnippet }) => {
     useEffect(() => {
         updateTab(SNIPPET_TAB);
 
@@ -51,12 +54,26 @@ const Snippet = ({ auth : { user : {snippet} }, updateTab }) => {
         e.preventDefault();
         try {
             const config = { headers: { "Content-Type": 'application/json' } };
-            await axios.post('http://localhost:5000/api/users/snippets', {name, code, language, description}, config);
-            updateSnippet([...snippets, { name, code, language, description }]);
+            const id = uuid();
+            const body = { id, name, code, language, description };
+            // Add snippet to database
+            await axios.post('http://localhost:5000/api/users/snippets', body, config);
+
+            // Update view of current component
+            updateSnippet([...snippets, body]);
+
+            // Update Redux Store
+            addSnippet(body);
+
+            // Reset data
             resetField();
+
+            // Send notification
+            addAlert("Snippet added", "success");
         } 
         catch (error) {
-            console.error(error.response);
+            error.response.data.errors.forEach(error => addAlert(error.msg, "danger"));
+            //console.error(error.response);
         }
     }
 
@@ -145,11 +162,13 @@ const Snippet = ({ auth : { user : {snippet} }, updateTab }) => {
 
 Snippet.propTypes = {
     updateTab: PropTypes.func.isRequired,
-    auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired,
+    addAlert: PropTypes.func.isRequired,
+    addSnippet: PropTypes.func.isRequired
 }
 
 const state_props = state => ({
     auth: state.auth
 })
 
-export default connect(state_props, { updateTab })(Snippet)
+export default connect(state_props, { updateTab, addAlert, addSnippet })(Snippet)
