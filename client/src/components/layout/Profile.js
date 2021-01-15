@@ -55,9 +55,9 @@ const Profile = ({ auth : { user }, submission, updateTab, getSubmission }) => {
                             {submissions.map((submission, idx)=> idx < 5 && (
                                 <tr key={idx}>
                                     <th scope="row">{idx+1}</th>
-                                    <td className="hide-sm"><Link to={`/submissions/${idx}`}>{submission._id}</Link></td>
+                                    <td className="hide-sm"><a href="!#">{submission._id}</a></td>
                                     <td><Link to={`/problemset/${submission.name._id}`}>{submission.name.name}</Link></td>
-                                    <td className="hide-sm"><Moment format="YYYY/MM/DD -  HH:mm" local>{submission.date}</Moment></td>
+                                    <td className="hide-sm"><Moment format="YY/MM/DD -  HH:mm" local>{submission.date}</Moment></td>
                                     <td className={submission.verdict === "Accepted" ? "accepted" : "wa"}>{submission.verdict}</td>
                                 </tr>
                             ))}

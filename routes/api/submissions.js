@@ -17,7 +17,7 @@ router.use(upload());
 // @access  Private
 router.get('/me', auth, async (req, res) => {
     try {
-        let user_submission = await User.findOne({ _id: req.user.id }).populate('submission', ['name', 'submission', 'verdict', 'date', 'language']).select('submission');
+        let user_submission = await User.findOne({ _id: req.user.id }).populate('submission', ['name', 'submission', 'verdict', 'date']).select('submission');
         await Submission.populate(user_submission, {
             path: 'submission.name',
             select: 'name',
@@ -104,27 +104,13 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
-// @route   GET /api/submissions/problem/:problem_id
+// @route   GET /api/submissions/:problem_id
 // @desc    Get all submissions for problem with problem_id
 // @access  Public
-router.get('/problem/:problem_id', async (req, res) => {
+router.get('/:problem_id', async (req, res) => {
     try {
         const submission_list = await Submission.find({ name: req.params.problem_id });
         res.json(submission_list);
-    } 
-    catch (error) {
-        console.error(error.message);
-        res.status(500).send("Server Error");    
-    }
-});
-
-// @route   GET /api/submissions/:submission_id
-// @desc    Get submissions with given ID
-// @access  Public
-router.get('/:submission_id', async (req, res) => {
-    try {
-        const submission = await Submission.findOne({ _id: req.params.submission_id });
-        res.json(submission);
     } 
     catch (error) {
         console.error(error.message);

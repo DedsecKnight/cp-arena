@@ -15,7 +15,6 @@ import ProblemWriting from './components/layout/ProblemWriting';
 import Problem from './components/layout/Problem';
 import SubmitSolution from './components/layout/SubmitSolution';
 import Alert from './components/utilities/Alert';
-import Submission from './components/layout/Submission';
 
 const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab }) => {
     useEffect(() => {
@@ -41,7 +40,6 @@ const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab 
                         <ProtectedRoute path="/problemwriting" exact component={ProblemWriting}/>  
                         <ProtectedRoute path="/problemset/:id" exact component={Problem} />
                         <ProtectedRoute path="/problemset/:id/submit" exact component={SubmitSolution}/>
-                        <ProtectedRoute path="/submissions/:id" exact component={Submission} />
                         {authenticated && <Redirect from="*" to="/404" /> }
                     </Switch>
                 </section>
