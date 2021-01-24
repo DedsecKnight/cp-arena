@@ -15,7 +15,7 @@ const Profile = ({ auth : { user }, submission, updateTab, getSubmission }) => {
     useEffect(() => {
         updateTab(HOME_TAB);
         getSubmission();
-    }, []);
+    }, [updateTab, getSubmission]);
 
     return (
             <div className="user-profile">
