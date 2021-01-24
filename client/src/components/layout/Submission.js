@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect } from 'react'
 import Moment from 'react-moment'
-import { fileExtensionReverse } from '../../utilities/config';
+import { fileExtensionReverse, extensionToName } from '../../utilities/config';
 import { connect } from 'react-redux'
 import CodeDisplay from '../utilities/CodeDisplay';
 import PropTypes from 'prop-types'
@@ -22,17 +22,19 @@ const Submission = ({ match, submission : { submissions }, auth: { user : { hand
             <table className="table">
                 <thead>
                     <tr>
-                        <th scope="col">Date</th>
                         <th scope="col">Author</th>
                         <th scope="col">Problem Name</th>
+                        <th scope="col">Language</th>
+                        <th scope="col">Date</th>
                         <th scope="col">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><Moment format="YYYY/MM/DD -  HH:mm" local>{date}</Moment></td>
                         <td>@{handle}</td>
                         <td><Link to={`/problemset/${_id}`}>{name}</Link></td>
+                        <td className={fileExtensionReverse[language]}>{extensionToName[language]}</td>
+                        <td><Moment format="YYYY/MM/DD -  HH:mm" local>{date}</Moment></td>
                         <td className={verdict === "Accepted" ? "accepted" : "wa"}>{verdict}</td>
                     </tr>
                 </tbody>

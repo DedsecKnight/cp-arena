@@ -17,7 +17,7 @@ router.use(upload());
 // @access  Private
 router.get('/me', auth, async (req, res) => {
     try {
-        let user_submission = await User.findOne({ _id: req.user.id }).populate('submission', ['name', 'submission', 'verdict', 'date']).select('submission');
+        let user_submission = await User.findOne({ _id: req.user.id }).populate('submission', ['name', 'submission', 'verdict', 'date', 'language']).select('submission');
         await Submission.populate(user_submission, {
             path: 'submission.name',
             select: 'name',
@@ -47,14 +47,15 @@ router.post('/', auth, async (req, res) => {
     if (submission_code && !req.body.language) return res.status(400).json({ errors: [{ msg: "Please specify programming language" }] });
 
     const { user : { id }, body : { problem } } = req;
-    const filename = id + "_" + problem;
+    let filename = req.body.file_name || (id + "_" + problem);
     let filetype = "";
 
     try {
         if (submission_file) {
             const { files: { submission } } = req;
             filetype = submission.name.substring(submission.name.indexOf(".")+1, submission.name.length);
-            submission.name = filename + "." + filetype;
+            if (filetype !== "java") submission.name = filename + "." + filetype;
+            else filename = submission.name.substring(0, submission.name.indexOf("."));
             await submission.mv('submissions/' + submission.name);
         }
         else {
@@ -64,7 +65,8 @@ router.post('/', auth, async (req, res) => {
         let currProblem = await Problem.findOne({ _id: problem });
         const user_output = exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype);
         const judge_output = currProblem.testcases.map((inp) => inp.output);
-        
+
+
         let verdict = -1;
 
         for (var i = 0; i < judge_output.length; i++) {

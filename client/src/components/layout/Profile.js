@@ -6,6 +6,7 @@ import { updateTab } from '../../actions/navTab';
 import { HOME_TAB } from '../../utilities/config';
 import { getSubmission } from '../../actions/submission';
 import { Link } from 'react-router-dom';
+import { extensionToName, fileExtensionReverse } from '../../utilities/config';
 
 const Profile = ({ auth : { user }, submission, updateTab, getSubmission }) => {
     const { name, handle, description } = user;
@@ -47,16 +48,19 @@ const Profile = ({ auth : { user }, submission, updateTab, getSubmission }) => {
                             <th scope="col">#</th>
                             <th scope="col" className="hide-sm">Submission ID</th>
                             <th scope="col">Problem Name</th>
+                            <th scope="col">Language</th>
                             <th scope="col" className="hide-sm">Submission Time</th>
                             <th scope="col">Verdict</th>
+                            
                         </tr>
                         </thead>
                         <tbody>
                             {submissions.map((submission, idx)=> idx < 5 && (
                                 <tr key={idx}>
                                     <th scope="row">{idx+1}</th>
-                                    <td className="hide-sm"><a href="!#">{submission._id}</a></td>
+                                    <td className="hide-sm"><Link to={`/submissions/${idx}`}>{submission._id}</Link></td>
                                     <td><Link to={`/problemset/${submission.name._id}`}>{submission.name.name}</Link></td>
+                                    <td className={`hide-sm ${fileExtensionReverse[submission.language]}`}><strong>{extensionToName[submission.language]}</strong></td>
                                     <td className="hide-sm"><Moment format="YY/MM/DD -  HH:mm" local>{submission.date}</Moment></td>
                                     <td className={submission.verdict === "Accepted" ? "accepted" : "wa"}>{submission.verdict}</td>
                                 </tr>

@@ -26,6 +26,8 @@ const SubmitSolution = ({ match, addAlert }) => {
 
     const [code, setCode] = useState("");
     const [file, setFile] = useState("");
+    const [filename, setFileName] = useState("");
+
     const [options, setOptions] = useState({
         mode: '',
         indentWithTabs: true,
@@ -62,12 +64,14 @@ const SubmitSolution = ({ match, addAlert }) => {
             else {
                 const config = { headers: { "Content-Type": "application/json" } };
                 const body = { code, language: fileExtension[options.mode], problem: match.params.id };
+                if (options.mode === "text/x-java") body.file_name = filename;
                 const res = await axios.post('http://localhost:5000/api/submissions', body, config);
                 addAlert(res.data.verdict, res.data.verdict === "Accepted" ? "success" : "danger");
             }
         } 
         catch (error) {
-            error.response.data.errors.forEach(error => addAlert(error.msg, "danger"));
+            console.error(error);
+            //error.response.data.errors.forEach(error => addAlert(error.msg, "danger"));
             //console.log(error.response);
         }
     }
@@ -84,6 +88,11 @@ const SubmitSolution = ({ match, addAlert }) => {
                         <option value="text/x-python">Python</option>
                     </select>
                 </div>
+                {(options.mode === "text/x-java" && (
+                    <div className="form-group">
+                        <input placeholder="Enter file's class name" type="text" value={filename} onChange={e => setFileName(e.target.value)} className="form-control"/>
+                    </div>
+                ))}
                 <div className="form-group">
                     <input disabled={code !== "" && "disabled"} name="submission" type="file" className="form-control-file" onChange={e => setFile(e.target.files[0])}/>
                 </div> 

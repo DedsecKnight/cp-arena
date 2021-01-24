@@ -15,6 +15,18 @@ export const fileExtension = {
     "text/x-python": "py"
 };
 
+export const fileExtensionReverse = {
+    "java": "text/x-java",
+    "cpp": "text/x-c++src",
+    "py": "text/x-python"
+}
+
+export const extensionToName ={
+    "java": "Java",
+    "cpp": "C++",
+    "py": "Python"
+}
+
 export const parseInput = (input) => {
     return input.split('\n');
 }
