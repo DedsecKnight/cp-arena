@@ -66,17 +66,22 @@ router.post('/', auth, async (req, res) => {
         const user_output = exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype);
         const judge_output = currProblem.testcases.map((inp) => inp.output);
 
-
+        let compile_success = true;
         let verdict = -1;
 
         for (var i = 0; i < judge_output.length; i++) {
+            if (user_output[i] === "Compilation Error") {
+                compile_success = false;
+                break;
+            }
             if (user_output[i].trim() !== judge_output[i].trim()) {
                 verdict = i;
                 break;
             }
         }
 
-        verdict = (verdict === -1 ? "Accepted" : `WA on test ${verdict + 1}`);
+        verdict = (compile_success ? verdict === -1 ? "Accepted" : `WA on test ${verdict + 1}` : "Compilation Error");
+        
         currProblem.submissionCount++;
         if (verdict === "Accepted") currProblem.acceptedCount++;
 
