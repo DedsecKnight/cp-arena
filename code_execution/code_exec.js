@@ -27,6 +27,26 @@ const exec_cpp = (filename, input) => {
     return out;
 }
 
+const exec_python = (filename, input) => {
+    spawnSync(`python -m py_compile "${filename}.py"`, { shell: true, cwd: "submissions"});
+    let out = [];
+    input.forEach((inp) => {
+        let child = spawnSync(`python ${filename}.py`, {
+            shell: true, 
+            cwd: "submissions", 
+            input: inp, 
+            encoding: 'utf-8',
+            stdio: 'pipe'
+        });
+        out.push(child.output[1]);
+    });
+    spawnSync(`del ${filename}.py`, {
+        shell: true, 
+        cwd: 'submissions'
+    });
+    return out;
+}
+
 const exec_java = (filename, input) => {
     spawnSync(`javac ${filename}.java`, { shell: true, cwd: "submissions"});
     let out = [];
@@ -59,6 +79,9 @@ const exec_code = (input, filename, filetype) => {
             break;
         case "java": 
             out = exec_java(filename, input);
+            break;
+        case "py":
+            out = exec_python(filename, input);
             break;
         default: out = []
     }
