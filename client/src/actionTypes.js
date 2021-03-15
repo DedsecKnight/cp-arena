@@ -3,6 +3,7 @@ export const USER_LOGOUT = "USER_LOGOUT";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILED = "LOGIN_FAILED";
 export const UPDATE_USER = "UPDATE_USER";
+export const REGISTER_FAILED = "REGISTER_FAILED";
 
 export const ADD_SNIPPET = "ADD_SNIPPET";
 export const REMOVE_SNIPPET = "REMOVE_SNIPPET";

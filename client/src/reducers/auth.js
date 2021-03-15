@@ -1,4 +1,4 @@
-import { USER_LOGIN, USER_LOGOUT, UPDATE_USER, LOGIN_FAILED, ADD_SNIPPET, REMOVE_SNIPPET } from '../actionTypes';
+import { USER_LOGIN, USER_LOGOUT, UPDATE_USER, LOGIN_FAILED, ADD_SNIPPET, REMOVE_SNIPPET, REGISTER_FAILED } from '../actionTypes';
 
 const initialState = {
     authenticated: false,
@@ -33,6 +33,7 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 token: payload.token
             });
+        case REGISTER_FAILED:
         case LOGIN_FAILED:
         case USER_LOGOUT:
             localStorage.removeItem("token"); 
