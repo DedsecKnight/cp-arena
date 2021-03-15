@@ -35,7 +35,6 @@ const Profile = ({ auth : { user }, submission, updateTab, getSubmission }) => {
                 <div className="user-stat">
                     <h3><strong>Facts about me</strong></h3>
                     <div className="summary">
-                        <h5 className="summary-info"><strong>Most used language: </strong>C++</h5>
                         <h5 className="summary-info"><strong>Problem with most submission: </strong>{currMaxSubmit || "N/A"}</h5>
                         <h5 className="summary-info"><strong>Problem with most AC: </strong>{currMaxAC || "N/A"}</h5>
                     </div>
