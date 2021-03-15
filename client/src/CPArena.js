@@ -16,6 +16,7 @@ import Problem from './components/layout/Problem';
 import SubmitSolution from './components/layout/SubmitSolution';
 import Alert from './components/utilities/Alert';
 import Submission from './components/layout/Submission';
+import Register from './components/layout/Register';
 
 const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab }) => {
     useEffect(() => {
@@ -27,24 +28,29 @@ const CPArena = ({ auth : { token, authenticated, loading }, updateUser, navTab 
                 <Fragment>
                     <Route path="/login" exact component={Login} />
                     <Redirect from="*" to="/login" />
+                    <Route path="/register" exact component={Register} />
                 </Fragment>
             )}
-            {authenticated && (<Navbar currentTab={navTab}/>)}
-                <section className="container">
-                    <Alert />
-                    <Switch>
-                        <ProtectedRoute path="/" exact component={Profile} />
-                        <ProtectedRoute path="/problemset" exact component={Problemset}/>
-                        
-                        <ProtectedRoute path="/snippet" exact component={Snippet}/>
-                        
-                        <ProtectedRoute path="/problemwriting" exact component={ProblemWriting}/>  
-                        <ProtectedRoute path="/problemset/:id" exact component={Problem} />
-                        <ProtectedRoute path="/problemset/:id/submit" exact component={SubmitSolution}/>
-                        <ProtectedRoute path="/submissions/:id" exact component={Submission} />
-                        {authenticated && <Redirect from="*" to="/404" /> }
-                    </Switch>
-                </section>
+            {authenticated && (
+                <Fragment>
+                    <Navbar currentTab={navTab}/>
+                    <section className="container">
+                        <Alert />
+                        <Switch>
+                            <ProtectedRoute path="/" exact component={Profile} />
+                            <ProtectedRoute path="/problemset" exact component={Problemset}/>
+                            
+                            <ProtectedRoute path="/snippet" exact component={Snippet}/>
+                            
+                            <ProtectedRoute path="/problemwriting" exact component={ProblemWriting}/>  
+                            <ProtectedRoute path="/problemset/:id" exact component={Problem} />
+                            <ProtectedRoute path="/problemset/:id/submit" exact component={SubmitSolution}/>
+                            <ProtectedRoute path="/submissions/:id" exact component={Submission} />
+                            {authenticated && <Redirect from="*" to="/404" /> }
+                        </Switch>
+                    </section>
+                </Fragment>
+            )}
         </Router>)
     )
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { loginUser } from '../../actions/auth';
@@ -41,7 +41,7 @@ const Login = ({ loginUser }) => {
                     <input type="submit" className="btn btn-primary login-submit" />
                     {/* <a href="mystat.html" className="btn btn-primary login-submit">Login</a> */}
                 </div>
-                <small className="small-text">Not registered? <a href="register.html">Create an account</a></small>
+                <small className="small-text">Not registered? <Link to="/register">Create an account</Link></small>
             </form>  
         </div>
     );
