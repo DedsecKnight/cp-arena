@@ -12,7 +12,7 @@ const Register = ({ registerUser }) => {
         handle: '',
         email: '',
         password: '',
-        language: '',
+        description: ''
     })
 
     const update = (e) => {
@@ -28,6 +28,8 @@ const Register = ({ registerUser }) => {
         history.push('/');
     }
 
+    const { name, handle, email, password, description } = formData;
+
     return (
         <Fragment>
             <nav className="navbar">
@@ -40,24 +42,19 @@ const Register = ({ registerUser }) => {
                 <h2 className="my-5">Let's get you ready to solve some problems</h2>
                 <form className="cparena-form" onSubmit={e => submit(e)}>
                     <div className="form-group">
-                        <input type="text" className="form-control" onChange={(e) => update(e)} name="name" placeholder="Name" />
+                        <input type="text" className="form-control" value={name} onChange={(e) => update(e)} name="name" placeholder="Name" />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" onChange={(e) => update(e)} name="handle" placeholder="Handle (nickname)" />
+                        <input type="text" className="form-control" value={handle} onChange={(e) => update(e)} name="handle" placeholder="Handle (nickname)" />
                     </div>
                     <div className="form-group">
-                        <input type="email" className="form-control" onChange={(e) => update(e)} name="email" placeholder="Email" />
+                        <input type="email" className="form-control" value={email} onChange={(e) => update(e)} name="email" placeholder="Email" />
                     </div>
                     <div className="form-group">
-                        <input type="password" className="form-control" onChange={(e) => update(e)} name="password" placeholder="Password" />
+                        <input type="password" className="form-control" value={password} onChange={(e) => update(e)} name="password" placeholder="Password" />
                     </div>
                     <div className="form-group">
-                        <select name="language" defaultValue="" className="form-control" onChange={(e) => update(e)}>
-                            <option value="">Choose a programming language</option>
-                            <option value="cpp">C++</option>
-                            <option value="java">Java</option>
-                            <option value="python">Python</option>
-                        </select>
+                        <textarea name="description" onChange={e => update(e)} value={description} cols="30" rows="5" className="form-control" placeholder="Tell us about yourself"></textarea>
                     </div>
                     <div className="form-group">
                         <input type="submit" className="btn btn-primary login-submit" />  
