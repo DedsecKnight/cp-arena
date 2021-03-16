@@ -17,7 +17,7 @@ const exec_cpp = (filename, input) => {
                 stdio: 'pipe'
             });
 
-            if (child.output[2] === "") out.push(child.output[1]);
+            if (child.status === 0) out.push(child.output[1]);
             else throw new Error(config.get("compilationError"));
         });
         spawnSync(`del /f ${filename}.exe`, {
