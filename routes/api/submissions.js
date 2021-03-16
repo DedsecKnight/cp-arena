@@ -63,24 +63,25 @@ router.post('/', auth, async (req, res) => {
             fs.writeFileSync('submissions/' + filename + "." + filetype, req.body.code);
         }
         let currProblem = await Problem.findOne({ _id: problem });
-        const user_output = exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype);
+        const user_output = exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype, currProblem.timelimit);
         const judge_output = currProblem.testcases.map((inp) => inp.output);
 
         let compile_success = true;
         let verdict = -1;
 
-        for (var i = 0; i < judge_output.length; i++) {
-            if (user_output[i] === "Compilation Error") {
+        for (var i = 0; i < user_output.length; i++) {
+            if (user_output[i].indexOf("Time limit exceeded") !== -1 || user_output[i] === "Compilation Error") {
                 compile_success = false;
                 break;
             }
             if (user_output[i].trim() !== judge_output[i].trim()) {
+                console.error(user_output[i]);
                 verdict = i;
                 break;
             }
         }
 
-        verdict = (compile_success ? verdict === -1 ? "Accepted" : `WA on test ${verdict + 1}` : "Compilation Error");
+        verdict = (compile_success ? verdict === -1 ? "Accepted" : `WA on test ${verdict + 1}` :  user_output[0]);
         
         currProblem.submissionCount++;
         if (verdict === "Accepted") currProblem.acceptedCount++;
