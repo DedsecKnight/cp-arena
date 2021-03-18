@@ -62,11 +62,11 @@ const Problem = new mongoose.Schema({
         type: Number, 
         default: 0
     },
-    validatorRequired: {
+    checkerRequired: {
         type: Boolean,
         default: false
     },
-    validatorCode: {
+    checkerCode: {
         type: String
     }
 });
