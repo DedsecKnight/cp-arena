@@ -75,7 +75,6 @@ router.post('/', auth, async (req, res) => {
                 break;
             }
             if (user_output[i].trim() !== judge_output[i].trim()) {
-                console.error(user_output[i]);
                 verdict = i;
                 break;
             }
