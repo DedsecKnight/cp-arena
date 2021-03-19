@@ -6,7 +6,8 @@ import { connect } from 'react-redux'
 import { updateTab } from '../../actions/navTab'
 import { addAlert } from '../../actions/alert';
 import { PROBLEM_WRITING_TAB } from '../../utilities/config'
-
+import { readFile } from '../../utilities/readFile';
+ 
 const ProblemWriting = ({ history, updateTab, addAlert }) => {
     useEffect(() => {
         updateTab(PROBLEM_WRITING_TAB);
@@ -64,6 +65,18 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
         setForm({...formData, testcases: case_list});
     }
 
+    const addChecker = async (e) => {
+        try {
+            const data = await readFile(e.target.files[0]);
+            setForm({
+                ...formData,
+                checkerCode: data
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const setSample = (e, idx) => {
         let case_list = formData.testcases;
         let curr_case = formData.testcases[idx];
@@ -98,6 +111,7 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
 
     const submit = async (e) => {
         e.preventDefault();
+        console.log(formData);
         if (testcases.length === 0) {
             addAlert("At least 1 test case is required", "danger");
             return;
@@ -120,6 +134,7 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
             testcases: [],
             sampleTestCases: [],
             checkerRequired,
+            checkerCode
         };
 
         // const n = testcases.length;
@@ -248,7 +263,7 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
                 <div className="form-group">
                     <p className="lead">Checker required:  <input type="checkbox" name="checkerRequired" checked={checkerRequired} onChange={e => update(e)}/> </p>
                     <p className="lead">Upload checker script</p>
-                    <input disabled={!checkerRequired && "disabled"} type="file" className="form-control-file" />
+                    <input disabled={!checkerRequired && "disabled"} onChange={e => addChecker(e)} type="file" className="form-control-file" />
                 </div>
                 { testcases.map((testcase, idx)=> (
                     <div key={idx} className="test-case">
