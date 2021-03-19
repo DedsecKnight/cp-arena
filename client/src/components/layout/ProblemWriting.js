@@ -6,7 +6,8 @@ import { connect } from 'react-redux'
 import { updateTab } from '../../actions/navTab'
 import { addAlert } from '../../actions/alert';
 import { PROBLEM_WRITING_TAB } from '../../utilities/config'
-
+import { readFile } from '../../utilities/readFile';
+ 
 const ProblemWriting = ({ history, updateTab, addAlert }) => {
     useEffect(() => {
         updateTab(PROBLEM_WRITING_TAB);
@@ -64,6 +65,18 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
         setForm({...formData, testcases: case_list});
     }
 
+    const addChecker = async (e) => {
+        try {
+            const data = await readFile(e.target.files[0]);
+            setForm({
+                ...formData,
+                checkerCode: data
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const setSample = (e, idx) => {
         let case_list = formData.testcases;
         let curr_case = formData.testcases[idx];
@@ -98,6 +111,7 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
 
     const submit = async (e) => {
         e.preventDefault();
+        console.log(formData);
         if (testcases.length === 0) {
             addAlert("At least 1 test case is required", "danger");
             return;
@@ -120,18 +134,14 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
             testcases: [],
             sampleTestCases: [],
             checkerRequired,
+            checkerCode
         };
-
-        // const n = testcases.length;
 
         for (let i = 0; i < testcases.length; i++) {
             let curr_case = ({
                 input: '',
                 output: ''
             });
-
-            let inputReader = new FileReader();
-            let outputReader = new FileReader();
             
             const { inputFile, outputFile, explanation, isSampleCase } = testcases[i];
 
@@ -144,55 +154,34 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
                 return;
             }
 
-            const currIdx = i;
-
-            const read = async (idx) => {
-                if (idx === 0) {
-                    inputReader.onload = async (e) => {
-                        curr_case.input = e.target.result;
-                        try {
-                            await read(idx + 1);    
-                        } 
-                        catch (error) {
-                            console.error(error.message);
-                        }
-                    }
-                    inputReader.readAsText(inputFile);
-                }
-                else {
-                    outputReader.onload = async (e) => {
-                        curr_case.output = e.target.result;
-                        body.testcases.push(curr_case);
-                        if (isSampleCase) {
-                            curr_case.explanation = explanation;
-                            body.sampleTestCases.push(curr_case);
-                        }
-                        if (currIdx === testcases.length-1) {
-                            if (body.sampleTestCases.length === 0) {
-                                addAlert("At least 1 sample test case is required", "danger");
-                                return;
-                            }
-                            try {
-                                const config = { headers: { "Content-Type" : "application/json" }};
-                                await axios.post('http://localhost:5000/api/problems', body, config);
-                                addAlert("Problem added", "success");
-                                history.push('/problemset');
-                            } 
-                            catch (error) {
-                                error.response.data.errors.forEach(error => addAlert(error.msg, "danger"));
-                            }
-                        }
-                    }
-                    outputReader.readAsText(outputFile);
-                }
-
-            };
-
             try {
-                await read(0);
-            } catch (error) {
-                console.error(error.message);
+                curr_case.input = await readFile(inputFile);
+                curr_case.output = await readFile(outputFile);
+                body.testcases.push(curr_case);
+            } 
+            catch (error) {
+                addAlert(error.message);
+                return;
             }
+
+            if (isSampleCase) {
+                curr_case.explanation = explanation;
+                body.sampleTestCases.push(curr_case);
+            }
+        }
+
+        if (body.sampleTestCases.length === 0) {
+            addAlert("At least 1 sample test case is required", "danger");
+            return;
+        }
+        try {
+            const config = { headers: { "Content-Type" : "application/json" }};
+            await axios.post('http://localhost:5000/api/problems', body, config);
+            addAlert("Problem added", "success");
+            history.push('/problemset');
+        } 
+        catch (error) {
+            error.response.data.errors.forEach(error => addAlert(error.msg, "danger"));
         }
         
     }
@@ -212,8 +201,6 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
         hint_list.splice(idx, 1);
         setForm({...formData, hint: hint_list});
     }
-
-    
 
     return (
         <Fragment>
@@ -248,7 +235,7 @@ const ProblemWriting = ({ history, updateTab, addAlert }) => {
                 <div className="form-group">
                     <p className="lead">Checker required:  <input type="checkbox" name="checkerRequired" checked={checkerRequired} onChange={e => update(e)}/> </p>
                     <p className="lead">Upload checker script</p>
-                    <input disabled={!checkerRequired && "disabled"} type="file" className="form-control-file" />
+                    <input disabled={!checkerRequired && "disabled"} onChange={e => addChecker(e)} type="file" className="form-control-file" />
                 </div>
                 { testcases.map((testcase, idx)=> (
                     <div key={idx} className="test-case">

@@ -46,7 +46,7 @@ router.post('/',  [
         return true;
     }),
     body('checkerCode').custom((code, { req }) => {
-        if (!code && req.body.checkerRequired) throw new Error('Validator Code is required');
+        if (!code && req.body.checkerRequired) throw new Error('Checker Code is required');
         return true;
     })
 ], async (req, res) => {
