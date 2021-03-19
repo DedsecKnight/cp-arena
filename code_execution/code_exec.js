@@ -1,5 +1,6 @@
-const { spawnSync } = require('child_process');
+const { spawnSync, spawn } = require('child_process');
 const config = require('config');
+const { COMPILATION_ERROR } = require('./checker_flag');
 
 const exec_cpp = (filename, input, timelimit) => {
     var out = [];
@@ -18,7 +19,7 @@ const exec_cpp = (filename, input, timelimit) => {
                 timeout: timelimit * 100
             });
 
-            if (child.error.errno === "ETIMEDOUT") {
+            if (child.error && child.error.errno === "ETIMEDOUT") {
                 throw new Error(`Time limit exceeded in test ${idx + 1}`);
             }
 
@@ -99,7 +100,7 @@ const exec_java = (filename, input, timelimit) => {
                 timeout: timelimit * 100
             });
             
-            if (child.error.errno === "ETIMEDOUT") {
+            if (child.error && child.error.errno === "ETIMEDOUT") {
                 throw new Error(`Time limit exceeded in test ${idx + 1}`);
             }
 
@@ -158,6 +159,15 @@ const exec_checker = (input, judge_output, user_output, checkerName) => {
         encoding: 'utf-8',
         stdio: 'pipe'
     });
+    spawn(`del ${checkerName}`, {
+        shell: true, 
+        cwd: "checker"
+    });
+    spawn(`del ${checkerName}.cpp`, {
+        shell: true,
+        cwd: "checker"
+    });
+
     return child.status;
 }
 
