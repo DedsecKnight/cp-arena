@@ -2,7 +2,8 @@ const express = require('express');
 const fs = require('fs');
 const upload = require('express-fileupload');
 const router = express.Router();
-const exec_code = require('../../code_execution/code_exec');
+const { exec_code, exec_checker } = require('../../code_execution/code_exec');
+const { TC_FAILED, COMPILATION_ERROR } = require('../../code_execution/checker_flag');
 
 const Problem = require('../../models/Problem');
 const Submission = require('../../models/Submission');
@@ -60,11 +61,15 @@ router.post('/', auth, async (req, res) => {
         }
         else {
             filetype = req.body.language;
-            fs.writeFileSync('submissions/' + filename + "." + filetype, req.body.code);
+            fs.writeFileSync(`submissions/${filename}.${filetype}`, req.body.code);
         }
         let currProblem = await Problem.findOne({ _id: problem });
         const user_output = exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype, currProblem.timelimit);
         const judge_output = currProblem.testcases.map((inp) => inp.output);
+
+        if (currProblem.checkerRequired) {
+            fs.writeFileSync(`checker/${currProblem._id}.cpp`, currProblem.checkerCode);
+        }
 
         let compile_success = true;
         let verdict = -1;
@@ -74,7 +79,19 @@ router.post('/', auth, async (req, res) => {
                 compile_success = false;
                 break;
             }
-            if (user_output[i].trim() !== judge_output[i].trim()) {
+            if (currProblem.checkerRequired) {
+                const { input, output } = currProblem.testcases[i];
+                const status = exec_checker(input, output, user_output[i], currProblem._id);
+                if (status === COMPILATION_ERROR) {
+                    compile_success = false;
+                    break;
+                }
+                if (status === TC_FAILED) {
+                    verdict = i;
+                    break;
+                }
+            }
+            else if (user_output[i].trim() !== judge_output[i].trim()) {
                 console.error(user_output[i]);
                 verdict = i;
                 break;

@@ -144,4 +144,21 @@ const exec_code = (input, filename, filetype, timelimit) => {
     return out;
 }
 
-module.exports = exec_code;
+const exec_checker = (input, judge_output, user_output, checkerName) => {
+    let data = `${input}\\n${user_output}\\n${judge_output}`;
+    const command = `g++ -std=c++17 -Wshadow -Wall -o "${checkerName}" "${checkerName}.cpp"  -O2 -Wno-unused-result`;
+    spawnSync(command, {
+        shell: true, 
+        cwd: 'checker'
+    });
+    let child = spawnSync(`${checkerName}.exe`, {
+        shell: true, 
+        cwd: "checker", 
+        input: data,
+        encoding: 'utf-8',
+        stdio: 'pipe'
+    });
+    return child.status;
+}
+
+module.exports = { exec_checker, exec_code };
