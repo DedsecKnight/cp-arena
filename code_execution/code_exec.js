@@ -168,6 +168,7 @@ const exec_checker = (input, judge_output, user_output, checkerName) => {
         cwd: "checker"
     });
 
+    if (child.status > 0) return COMPILATION_ERROR;
     return child.status;
 }
 
