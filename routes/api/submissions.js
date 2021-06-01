@@ -2,7 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const upload = require('express-fileupload');
 const router = express.Router();
-const { exec_code, exec_checker } = require('../../code_execution/code_exec');
+const { exec_code, exec_checker, CodeExecEvent } = require('../../code_execution/code_exec');
 const { TC_FAILED, COMPILATION_ERROR } = require('../../code_execution/checker_flag');
 
 const Problem = require('../../models/Problem');
@@ -64,64 +64,67 @@ router.post('/', auth, async (req, res) => {
             fs.writeFileSync(`submissions/${filename}.${filetype}`, req.body.code);
         }
         let currProblem = await Problem.findOne({ _id: problem });
-        const user_output = exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype, currProblem.timelimit);
         const judge_output = currProblem.testcases.map((inp) => inp.output);
 
         if (currProblem.checkerRequired) {
             fs.writeFileSync(`checker/${currProblem._id}.cpp`, currProblem.checkerCode);
         }
-
-        let compile_success = true;
-        let verdict = -1;
-
-        for (var i = 0; i < user_output.length; i++) {
-            if (user_output[i].indexOf("Time limit exceeded") !== -1 || user_output[i] === "Compilation Error") {
-                compile_success = false;
-                break;
-            }
-            if (currProblem.checkerRequired) {
-                const { input, output } = currProblem.testcases[i];
-                const status = exec_checker(input, output, user_output[i], currProblem._id);
-                if (status === COMPILATION_ERROR) {
-                    compile_success = false;
-                    break;
-                }
-                if (status === TC_FAILED) {
-                    verdict = i;
-                    break;
-                }
-            }
-            else if (user_output[i].trim() !== judge_output[i].trim()) {
-                console.error(user_output[i]);
-                verdict = i;
-                break;
-            }
-        }
-
-        verdict = (compile_success ? verdict === -1 ? "Accepted" : `WA on test ${verdict + 1}` :  user_output[0]);
         
-        currProblem.submissionCount++;
-        if (verdict === "Accepted") currProblem.acceptedCount++;
-
-        const file = (submission_file ? req.files.submission.data.toString('utf-8') : req.body.code);
-
-        let submission_obj = new Submission({
-            name: problem, 
-            user: id, 
-            submission: file,
-            verdict, 
-            language: filetype
-        });
+        const currentEvent = new CodeExecEvent();
+        exec_code(currProblem.testcases.map(inp => inp.input), filename, filetype, currProblem.timelimit, judge_output, currentEvent);
         
+        currentEvent.prependOnceListener('finished', async (judgeResult) => {
+            verdict = (judgeResult.status === 'OK' ?  "Accepted" : judgeResult.message);
         
-        let user = await User.findOne({ _id : id });
-        user.submission.unshift(submission_obj._id);
+            currProblem.submissionCount++;
+            if (verdict === "Accepted") currProblem.acceptedCount++;
 
-        await user.save();
-        await submission_obj.save();
-        await currProblem.save();
+            const file = (submission_file ? req.files.submission.data.toString('utf-8') : req.body.code);
 
-        res.json({ verdict });
+            let submission_obj = new Submission({
+                name: problem, 
+                user: id, 
+                submission: file,
+                verdict, 
+                language: filetype
+            });
+            
+            
+            let user = await User.findOne({ _id : id });
+            user.submission.unshift(submission_obj._id);
+
+            await user.save();
+            await submission_obj.save();
+            await currProblem.save();
+
+            res.json({ verdict });
+        })
+        
+        // for (var i = 0; i < user_output.length; i++) {
+        //     if (user_output[i].indexOf("Time limit exceeded") !== -1 || user_output[i] === "Compilation Error") {
+        //         compile_success = false;
+        //         break;
+        //     }
+        //     if (currProblem.checkerRequired) {
+        //         const { input, output } = currProblem.testcases[i];
+        //         const status = exec_checker(input, output, user_output[i], currProblem._id);
+        //         if (status === COMPILATION_ERROR) {
+        //             compile_success = false;
+        //             break;
+        //         }
+        //         if (status === TC_FAILED) {
+        //             verdict = i;
+        //             break;
+        //         }
+        //     }
+        //     else if (user_output[i].trim() !== judge_output[i].trim()) {
+        //         console.error(user_output[i]);
+        //         verdict = i;
+        //         break;
+        //     }
+        // }
+
+        
     } 
     catch (error) {
         console.error(error.message);
