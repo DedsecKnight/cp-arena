@@ -1,5 +1,4 @@
 const { spawn } = require('child_process')
-const config = require('config');
 
 const execJava = (filename, input, timelimit, judge_output, eventObj) => {    
     exec_java_helper(filename, input, timelimit, judge_output, eventObj, 0);
@@ -28,25 +27,25 @@ const exec_java_helper = (filename, input, timelimit, judge_output, eventObj, id
         shell: true,
         cwd: "submissions",
         encoding: 'utf-8',
-        timeout: 1000
     });
 
     child.stdin.write(input[idx]);
 
-    child.on('error', (err) => {
-        console.log(err);
-        if (err.errno === "ETIMEDOUT") {
-            eventObj.emit('finished', {
-                status: 'NO_OK',
-                message: `Time limit exceeded in test ${idx + 1}`
-            })
-        }
-        else {
-            eventObj.emit('finished', {
-                status: 'NO_OK',
-                message: `Run time error in test ${idx + 1}`
-            })
-        }
+    let timer = setTimeout(() => {
+        child.kill();
+        eventObj.emit('finished', {
+            status: 'NO_OK',
+            message: `Time limit exceed in test ${idx + 1}`
+        })
+        clean_up(filename);
+        return;
+    }, timelimit * 5000);
+
+    child.on('error', () => {
+        eventObj.emit('finished', {
+            status: 'NO_OK',
+            message: `Run time error in test ${idx + 1}`
+        })
         clean_up(filename);
         return;
     })
@@ -63,17 +62,19 @@ const exec_java_helper = (filename, input, timelimit, judge_output, eventObj, id
     })
 
     child.on('exit', (code, signal) => {
-        console.log(code, signal);
         if (signal) {
             eventObj.emit('finished', {
                 status: 'NO_OK',
-                message: config.get("compilationError")
+                message: `Run time error in test ${idx + 1}`
             });
             clean_up(filename);
             return;
         }
+        clearTimeout(timer);
         exec_java_helper(filename, input, timelimit, judge_output, eventObj, idx + 1);
     })
+
+    
 
 }
 

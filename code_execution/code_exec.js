@@ -10,39 +10,59 @@ const { execPython } = require('./python')
 class CodeExecEvent extends EventEmitter {}
 
 const exec_cpp = (filename, input, timelimit, judge_output, eventObj) => {
-    spawnSync(`g++ -std=c++17 -Wshadow -Wall -o "${filename}" "${filename}.cpp"  -O2 -Wno-unused-result`,{
-        shell: true, 
-        cwd: "submissions"
-    });
+    try {
+        spawnSync(`g++ -std=c++17 -Wshadow -Wall -o "${filename}" "${filename}.cpp"  -O2 -Wno-unused-result`,{
+            shell: true, 
+            cwd: "submissions"
+        });
+    } catch (error) {
+        eventObj.emit('finished', {
+            status: 'NO_OK',
+            message: config.get('compilationError')
+        })
+    }
     execCpp(filename, input, timelimit, judge_output, eventObj);
 }
 
 const exec_python = (filename, input, timelimit, judge_output, eventObj) => {
-    spawnSync(`python -m py_compile "${filename}.py"`, { shell: true, cwd: "submissions"});
+    try {
+        spawnSync(`python -m py_compile "${filename}.py"`, { shell: true, cwd: "submissions"});
+    } catch (error) {
+        eventObj.emit('finished', {
+            status: 'NO_OK',
+            message: config.get('compilationError')
+        })
+    }
     execPython(filename, input, timelimit, judge_output, eventObj);
 }
 
 const exec_java = (filename, input, timelimit, judge_output, eventObj) => {
-    spawnSync(`javac ${filename}.java`, { shell: true, cwd: "submissions"});
+    try {
+        spawnSync(`javac ${filename}.java`, { shell: true, cwd: "submissions"});
+    } catch (error) {
+        eventObj.emit('finished', {
+            status: 'NO_OK',
+            message: config.get('compilationError')
+        })
+    }
     execJava(filename, input, timelimit, judge_output, eventObj);
 
 }
 
 const exec_code = (input, filename, filetype, timelimit, judge_output, eventObj) => {
-    let out = [];
     switch (filetype) {
         case "cpp": 
-            out = exec_cpp(filename, input, timelimit, judge_output);
+            exec_cpp(filename, input, timelimit, judge_output, eventObj);
             break;
         case "java": 
-            out = exec_java(filename, input, timelimit, judge_output, eventObj);
+            exec_java(filename, input, timelimit, judge_output, eventObj);
             break;
         case "py":
-            out = exec_python(filename, input, timelimit, judge_output);
+            exec_python(filename, input, timelimit, judge_output, eventObj);
             break;
-        default: out = []
+        default: 
+            return
     }
-    return out;
 }
 
 const exec_checker = (input, judge_output, user_output, checkerName) => {

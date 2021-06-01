@@ -1,5 +1,4 @@
 const { spawn } = require('child_process')
-const config = require('config');
 
 const execPython = (filename, input, timelimit, judge_output, eventObj) => {    
     exec_python_helper(filename, input, timelimit, judge_output, eventObj, 0);
@@ -29,8 +28,17 @@ const exec_python_helper = (filename, input, timelimit, judge_output, eventObj, 
 
     child.stdin.write(input[idx]);
 
+    let timer = setTimeout(() => {
+        child.kill();
+        eventObj.emit('finished', {
+            status: 'NO_OK',
+            message: `Time limit exceed in test ${idx + 1}`
+        })
+        clean_up(filename);
+        return;
+    }, timelimit * 5000);
+
     child.on('error', (err) => {
-        console.log(err);
         if (err.errno === "ETIMEDOUT") {
             eventObj.emit('finished', {
                 status: 'NO_OK',
@@ -59,17 +67,19 @@ const exec_python_helper = (filename, input, timelimit, judge_output, eventObj, 
     })
 
     child.on('exit', (code, signal) => {
-        console.log(code, signal);
         if (signal) {
             eventObj.emit('finished', {
                 status: 'NO_OK',
-                message: config.get("compilationError")
+                message: `Run time error in test ${idx + 1}`
             });
             clean_up(filename);
             return;
         }
+        clearTimeout(timer);
         exec_python_helper(filename, input, timelimit, judge_output, eventObj, idx + 1);
     })
+
+    
 
 }
 
